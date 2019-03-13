@@ -3,7 +3,7 @@ Word embedding based evaluation metrics for dialogue.
 
 This method implements three evaluation metrics based on Word2Vec word embeddings, which compare a target utterance with a model utterance:
 1) Computing cosine-similarity between the mean word embeddings of the target utterance and of the model utterance
-2) Computing greedy meatching between word embeddings of target utterance and model utterance (Rus et al., 2012)
+2) Computing greedy matching between word embeddings of target utterance and model utterance (Rus et al., 2012)
 3) Computing word embedding extrema scores (Forgues et al., 2014)
 
 We believe that these metrics are suitable for evaluating dialogue systems.

@@ -1,7 +1,7 @@
-'''
+"""
 Compatibility with older numpy's providing argpartition replacement.
 
-'''
+"""
 
 
 '''
