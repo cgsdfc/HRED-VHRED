@@ -7,11 +7,11 @@ The test context file can be given as input to the sample.py script to generate 
 
 Usage example:
 
-    python create-text-file-for-tests.py <model> Test_SplitByDialogues.dialogues.pkl --utterances_to_predict 2
+    python create_text_file_for_tests.py <model> Test_SplitByDialogues.dialogues.pkl --utterances_to_predict 2
 
 Usage example with truncated contexts:
 
-    python create-text-file-for-tests.py <model> Test_SplitByDialogues.dialogues.pkl --utterances_to_predict 2 --max_words_in_context 300
+    python create_text_file_for_tests.py <model> Test_SplitByDialogues.dialogues.pkl --utterances_to_predict 2 --max_words_in_context 300
 
 NOTE: It's better to use the original dialogues in plain text for building the context/response pairs, since we can then avoid unknown tokens!
 

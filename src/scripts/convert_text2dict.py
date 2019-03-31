@@ -5,6 +5,8 @@ using that input dictionary.
 
 @author Alessandro Sordoni, Iulian Vlad Serban
 """
+from __future__ import division
+
 import argparse
 import collections
 import logging
@@ -30,7 +32,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("input", type=str,
                         help="Dialogue file; assumed shuffled with one document"
-                             " (e.g. one movie dialogue, or one Twitter conversation or one Ubuntu conversation) per line")
+                             " (e.g. one movie dialogue,"
+                             " or one Twitter conversation or one Ubuntu conversation) per line")
     parser.add_argument("--cutoff", type=int, default=-1, help="Vocabulary cutoff (optional)")
     parser.add_argument("--dict", type=str, default="", help="External dictionary (pkl file)")
     parser.add_argument("output", type=str, help="Prefix of the pickle binarized dialogue corpus")
@@ -69,8 +72,7 @@ if __name__ == '__main__':
             line_words = line.strip().split()
             if line_words[-1] != '</s>':
                 line_words.append('</s>')
-            s = [x for x in line_words]
-            word_counter.update(s)
+            word_counter.update(line_words)
 
         total_freq = sum(word_counter.values())
         logger.info("Total word frequency in dictionary %d " % total_freq)
@@ -82,14 +84,23 @@ if __name__ == '__main__':
             vocab_count = word_counter.most_common()
 
         # Add special tokens to the vocabulary
-        vocab = {'<unk>': 0, '</s>': 1, '</d>': 2, '<first_speaker>': 3,
-                 '<second_speaker>': 4, '<third_speaker>': 5, '<minor_speaker>': 6,
-                 '<voice_over>': 7, '<off_screen>': 8, '<pause>': 9}
+        vocab = {
+            '<unk>': 0,
+            '</s>': 1,
+            '</d>': 2,
+            '<first_speaker>': 3,
+            '<second_speaker>': 4,
+            '<third_speaker>': 5,
+            '<minor_speaker>': 6,
+            '<voice_over>': 7,
+            '<off_screen>': 8,
+            '<pause>': 9,
+        }
 
         # Add other tokens to vocabulary in the order of their frequency
         i = 10
-        for (word, count) in vocab_count:
-            if not word in vocab:
+        for word, count in vocab_count:
+            if word not in vocab:
                 vocab[word] = i
                 i += 1
 
@@ -101,6 +112,7 @@ if __name__ == '__main__':
 
     # Everything is loaded into memory for the moment
     binarized_corpus = []
+
     # Some statistics
     unknowns = 0.
     num_terms = 0.
@@ -111,7 +123,7 @@ if __name__ == '__main__':
 
     for line, dialogue in enumerate(open(args.input, 'r')):
         dialogue_words = dialogue.strip().split()
-        if dialogue_words[len(dialogue_words) - 1] != '</s>':
+        if dialogue_words[-1] != '</s>':
             dialogue_words.append('</s>')
 
         # Convert words to token ids and compute some statistics
@@ -135,11 +147,13 @@ if __name__ == '__main__':
     safe_pickle(binarized_corpus, args.output + ".dialogues.pkl")
 
     if args.dict == "":
-        safe_pickle([(word, word_id, freqs[word_id], df[word_id]) for word, word_id in vocab.items()],
-                    args.output + ".dict.pkl")
+        safe_pickle(
+            [(word, word_id, freqs[word_id], df[word_id]) for word, word_id in vocab.items()],
+            args.output + ".dict.pkl"
+        )
 
     logger.info("Number of unknowns %d" % unknowns)
     logger.info("Number of terms %d" % num_terms)
-    logger.info("Mean document length %f" % float(sum(map(len, binarized_corpus)) / len(binarized_corpus)))
+    logger.info("Mean document length %f" % sum(map(len, binarized_corpus) / len(binarized_corpus)))
     logger.info(
         "Writing training %d dialogues (%d left out)" % (len(binarized_corpus), line + 1 - len(binarized_corpus)))

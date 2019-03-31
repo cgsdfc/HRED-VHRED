@@ -3,7 +3,7 @@ Takes as input a binarized dialogue corpus, splits the examples by a certain tok
 
 Example run:
 
-   python split-examples-by-token.py Training.dialogues.pkl 2 Training_SplitByDialogues.dialogues --join_last_two_examples
+   python split_examples_by_token.py Training.dialogues.pkl 2 Training_SplitByDialogues.dialogues --join_last_two_examples
 
 @author Iulian Vlad Serban
 """
@@ -124,7 +124,8 @@ if __name__ == '__main__':
         processed_tokens_count += len(processed_binarized_corpus[i])
     logger.info('New tokens count %d' % processed_tokens_count)
 
-    # When splitting by end-of-utterance token </s>, there are some instances with multiple </s> at the end of each example.
+    # When splitting by end-of-utterance token </s>,
+    # there are some instances with multiple </s> at the end of each example.
     # Our splitting method will effectively remove these, but it is not of any concern to us.
     # assert(processed_tokens_count == tokens_count)
 

@@ -31,7 +31,8 @@ stopwords = "all another any anybody anyone anything both each each other either
             " few he her hers herself him himself his I it its itself many me mine more most much myself neither" \
             " no one nobody none nothing one one another other others ours ourselves several she some somebody" \
             " someone something that their theirs them themselves these they this those us we what whatever" \
-            " which whichever who whoever whom whomever whose you your yours yourself yourselves . , ? ' - -- ! <unk> </s> <s>"
+            " which whichever who whoever whom whomever whose you your yours yourself yourselves" \
+            " . , ? ' - -- ! <unk> </s> <s>"
 
 
 def parse_args():
@@ -47,14 +48,15 @@ def parse_args():
                         help="Exclude stop words "
                              "(English pronouns, punctuation signs and special tokens) from all metrics."
                              " These words make up approximate 48.37% of the training set,"
-                             " so removing them should focus the metrics on the topical content and ignore syntactic errors.")
+                             " so removing them should focus the metrics on the topical content "
+                             "and ignore syntactic errors.")
 
     parser.add_argument("--document-ids",
                         type=str,
                         help="File containing document ids for each triple "
-                             "(one id per line, if there are multiple tabs the first entry will be taken as the doc id)."
-                             " If this is given the script will compute standard deviations across documents for all metrics."
-                             " CURRENTLY NOT IMPLEMENTED.")
+                             "(one id per line, if there are multiple tabs the first entry will be taken "
+                             "as the doc id). If this is given the script will compute standard deviations across "
+                             " documents for all metrics. CURRENTLY NOT IMPLEMENTED.")
 
     return parser.parse_args()
 

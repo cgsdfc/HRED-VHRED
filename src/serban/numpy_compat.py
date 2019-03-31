@@ -16,7 +16,6 @@ else:
     try:
         import bottleneck
 
-
         # warnings.warn('Your numpy is too old (You have %s, we need 1.7.1), but we have found argpartsort in bottleneck' % (numpy.__version__,))
         def argpartition(a, kth, axis=-1):
             return bottleneck.argpartsort(a, kth, axis)
