@@ -1,16 +1,12 @@
 """
-Computes BLEU@n, Jaccard, Recall, MRR, TF-IDF Cosine Similarity etc.
+Computes BLEU-N, Jaccard, Recall, MRR, TF-IDF Cosine Similarity etc.
 """
 __docformat__ = 'restructedtext en'
-__authors__ = ("Alessandro Sordoni, Iulian Vlad Serban")
+__authors__ = "Alessandro Sordoni, Iulian Vlad Serban"
 __contact__ = "Alessandro Sordoni <sordonia@iro.umontreal>"
 
-import sys
 import math
-import copy
-import re
 import operator
-import collections
 from collections import Counter
 
 import numpy
@@ -37,7 +33,7 @@ def count_ngrams(sentences, n=4):
         local_counts = {}
         list_len = len(sentence)
 
-        for k in xrange(1, n + 1):
+        for k in range(1, n + 1):
             for i in range(list_len - k + 1):
                 ngram = tuple(sentence[i:i + k])
                 local_counts[ngram] = local_counts.get(ngram, 0) + 1
@@ -61,7 +57,7 @@ class Jaccard:
     Use: 
     >>> j = Jaccard()
     >>> j.update("i have it", "i have is")
-    >>> print j.compute()
+    >>> print(j.compute())
     0.75
     >>> j.reset()
     """
@@ -94,7 +90,8 @@ class Jaccard:
 
 
 class JaccardEvaluator(object):
-    """ Jaccard evaluator
+    """
+    Jaccard evaluator
     """
 
     def __init__(self, n=3):
@@ -156,34 +153,35 @@ class Bleu:
 
         for ngram, count in cand_ngram_counts.items():
             stats[len(ngram) + self.n - 1] += min(count, refs_ngram_counts.get(ngram, 0))
-        for k in xrange(1, self.n + 1):
+        for k in range(1, self.n + 1):
             stats[k - 1] = max(len(candidate) - k + 1, 0)
         self.statistics.append(stats)
 
     def compute(self, smoothing=0, length_penalty=1):
-        precs = numpy.zeros((self.n + 1,))
+        precisions = numpy.zeros((self.n + 1,))
         stats = self.aggregate()
         log_bleu = 0.
 
         for k in range(self.n):
             correct = float(stats[self.n + k] + smoothing)
             if correct == 0.:
-                return 0., precs
+                return 0., precisions
             total = float(stats[k] + 2 * smoothing)
-            precs[k] = numpy.log(correct) - numpy.log(total)
-            log_bleu += precs[k]
+            precisions[k] = numpy.log(correct) - numpy.log(total)
+            log_bleu += precisions[k]
 
         log_bleu /= float(self.n)
         stats[-1] = stats[-1] * length_penalty
         log_bleu += min(0, 1 - float(stats[0] / stats[-1]))
-        return numpy.exp(log_bleu), numpy.exp(precs)
+        return numpy.exp(log_bleu), numpy.exp(precisions)
 
     def reset(self):
         self.statistics = []
 
 
 class BleuEvaluator(object):
-    """ Bleu evaluator
+    """
+    Bleu evaluator
     """
 
     def __init__(self, n=4):
@@ -246,7 +244,8 @@ class Recall:
 
 
 class RecallEvaluator(object):
-    """ Recall evaluator
+    """
+    Recall evaluator
     """
 
     def __init__(self, n=5):
@@ -318,7 +317,8 @@ class MRR:
 
 
 class MRREvaluator(object):
-    """ Mean reciprocal rank evaluator
+    """
+    Mean reciprocal rank evaluator
     """
 
     def __init__(self, n=5):
@@ -355,7 +355,7 @@ class TFIDF_CS:
     >>> tfidf_cs = TFIDF_CS()
     >>> tfidf_cs.update("i have it", ["i have is", "i have some"])
     >>> tfidf_cs.update("i have it", ["i have is", "i have it"])
-    >>> print tfidf_cs.compute()
+    >>> print(tfidf_cs.compute())
     >>> tfidf_cs.reset()
     """
 
@@ -372,7 +372,6 @@ class TFIDF_CS:
         return float(numpy.mean(stat_matrix))
 
     def update(self, candidates, ref):
-        stats = numpy.zeros((1,))
 
         # Split reference (target) into word indices and count each word
         ref_words = normalize(ref)
@@ -408,8 +407,6 @@ class TFIDF_CS:
 
             # Loop over unique indices (to speed up calculations) and compute un-normalized cosine similarity
             current_score = 0
-            cand_norm = 0
-            ref_norm = 0
             cand_vector = numpy.zeros((len(ref_indices)))
             cand_vector_norm = 0
 

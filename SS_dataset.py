@@ -1,13 +1,9 @@
-import numpy
-import os, gc
-import cPickle
-import copy
 import logging
-
+import pickle
 import threading
-import Queue
 
-import collections
+import queue
+import numpy
 
 logger = logging.getLogger(__name__)
 
@@ -80,13 +76,13 @@ class SSIterator(object):
         self.exit_flag = False
 
     def load_files(self):
-        self.data = cPickle.load(open(self.dialogue_file, 'r'))
+        self.data = pickle.load(open(self.dialogue_file, 'r'))
         self.data_len = len(self.data)
         logger.debug('Data len is %d' % self.data_len)
 
     def start(self):
         self.exit_flag = False
-        self.queue = Queue.Queue(maxsize=1000)
+        self.queue = queue.Queue(maxsize=1000)
         self.gather = SSFetcher(self)
         self.gather.daemon = True
         self.gather.start()

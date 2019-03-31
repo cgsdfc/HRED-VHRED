@@ -23,13 +23,16 @@ class Model(object):
         vals = dict([(x.name, x.get_value()) for x in self.params])
         numpy.savez(filename, **vals)
 
-    def load(self, filename, parameter_strings_to_ignore=[]):
+    def load(self, filename, parameter_strings_to_ignore=None):
         """
         Load the model.
 
         Any parameter which has one of the strings inside parameter_strings_to_ignore as a substring,
         will not be loaded from the file (but instead initialized as a new model, which usually means random).
         """
+        if parameter_strings_to_ignore is None:
+            parameter_strings_to_ignore = []
+
         vals = numpy.load(filename)
         for p in self.params:
             load_parameter = True

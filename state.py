@@ -1,8 +1,3 @@
-from collections import OrderedDict
-import cPickle
-import os
-
-
 def prototype_state():
     state = {}
 
@@ -74,17 +69,17 @@ def prototype_state():
     # otherwise only a forward utterance encoder is used.
     state['bidirectional_utterance_encoder'] = False
 
-    # If this flag is on, there will be a direct connection between utterance encoder and utterane decoder RNNs.
+    # If this flag is on, there will be a direct connection between utterance encoder and utterance decoder RNNs.
     state['direct_connection_between_encoders_and_decoder'] = False
 
     # If this flag is on, there will be an extra MLP between utterance encoder and utterance decoder.
     state['deep_direct_connection'] = False
 
-    # If this flag is on, the model will collaps to a standard RNN:
+    # If this flag is on, the model will collapse to a standard RNN:
     # 1) The utterance+dialogue encoder input to the utterance decoder will be zero
     # 2) The utterance decoder will never be reset
     # Note this model will always be initialized with a hidden state equal to zero.
-    state['collaps_to_standard_rnn'] = False
+    state['collapse_to_standard_rnn'] = False
 
     # If this flag is on, the utterance decoder will be reset after each end-of-utterance token.
     state['reset_utterance_decoder_at_end_of_utterance'] = True
@@ -97,7 +92,7 @@ def prototype_state():
     state['qdim_encoder'] = 512
     # Dimensionality of (word-level) utterance decoder (RNN which generates output) hidden state
     state['qdim_decoder'] = 512
-    # Dimensionality of (utterance-level) context encoder hidden layer 
+    # Dimensionality of (utterance-level) context encoder hidden layer
     state['sdim'] = 1000
     # Dimensionality of low-rank word embedding approximation
     state['rankdim'] = 256
@@ -144,7 +139,7 @@ def prototype_state():
 
     # If this flag is enabled, previous token input to the decoder RNN is replaced with 'unk' tokens at random.
     state['decoder_drop_previous_input_tokens'] = False
-    # The rate at which the previous tokesn input to the decoder is kept (not set to 'unk').
+    # The rate at which the previous tokens input to the decoder is kept (not set to 'unk').
     # Setting this to zero effectively disables teacher-forcing in the model.
     state['decoder_drop_previous_input_tokens_rate'] = 0.75
 
@@ -154,7 +149,7 @@ def prototype_state():
     state['fix_pretrained_word_embeddings'] = False
 
     # If this flag is on, the model will fix the parameters of the utterance encoder and dialogue encoder RNNs,
-    # as well as the word embeddings. NOTE: NOT APPLICABLE when the flag 'collaps_to_standard_rnn' is on.
+    # as well as the word embeddings. NOTE: NOT APPLICABLE when the flag 'collapse_to_standard_rnn' is on.
     state['fix_encoder_parameters'] = False
 
     # ----- TRAINING PROCEDURE -----
@@ -175,7 +170,7 @@ def prototype_state():
     state['cost_threshold'] = 1.003
     # Batch size. If out of memory, modify this!
     state['bs'] = 80
-    # Sort by length groups of  
+    # Sort by length groups of
     state['sort_k_batches'] = 20
     # Training examples will be split into subsequences.
     # This parameter controls the maximum size of each subsequence.
@@ -217,9 +212,9 @@ def prototype_test():
 
     state['valid_freq'] = 50
 
-    state['collaps_to_standard_rnn'] = False
+    state['collapse_to_standard_rnn'] = False
 
-    state['prefix'] = "testmodel_"
+    state['prefix'] = "test_model_"
     state['updater'] = 'adam'
 
     state['maxout_out'] = False
@@ -264,9 +259,9 @@ def prototype_test_variational():
 
     state['valid_freq'] = 5
 
-    state['collaps_to_standard_rnn'] = False
+    state['collapse_to_standard_rnn'] = False
 
-    state['prefix'] = "testmodel_"
+    state['prefix'] = "test_model_"
     state['updater'] = 'adam'
 
     state['maxout_out'] = False
@@ -325,7 +320,7 @@ def prototype_twitter_lstm():
     state['deep_dialogue_input'] = True
     state['deep_out'] = True
 
-    state['collaps_to_standard_rnn'] = True
+    state['collapse_to_standard_rnn'] = True
 
     state['bs'] = 80
     state['decoder_bias_type'] = 'all'
@@ -580,7 +575,7 @@ def prototype_ubuntu_LSTM():
     state['deep_dialogue_input'] = True
     state['deep_out'] = True
 
-    state['collaps_to_standard_rnn'] = True
+    state['collapse_to_standard_rnn'] = True
 
     state['bs'] = 80
     state['decoder_bias_type'] = 'all'

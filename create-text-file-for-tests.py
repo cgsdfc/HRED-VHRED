@@ -17,18 +17,8 @@ NOTE: It's better to use the original dialogues in plain text for building the c
 
 @author Iulian Vlad Serban
 """
-
 import argparse
-import cPickle
-import traceback
-import itertools
-import logging
-import time
-import sys
-
-import collections
-import string
-import os
+import pickle
 
 from state import prototype_state
 
@@ -55,7 +45,9 @@ def parse_args():
                         help="Path to the model prefix (without _model.npz or _state.pkl)")
 
     parser.add_argument("test_file",
-                        help="Path to the test file (pickled list, with one dialogue per entry; or plain text file with one dialogue per line)")
+                        help="Path to the test file "
+                             "(pickled list, with one dialogue per entry;"
+                             " or plain text file with one dialogue per line)")
 
     parser.add_argument("--utterances_to_predict",
                         type=int, default=1,
@@ -63,10 +55,12 @@ def parse_args():
 
     parser.add_argument("--max_words_in_context",
                         type=int, default=-1,
-                        help="Number of words in context (if there are more, the beginning of the context will be truncated)")
+                        help="Number of words in context "
+                             "(if there are more, the beginning of the context will be truncated)")
 
     parser.add_argument("--leave_out_short_dialogues", action='store_true',
-                        help="If enabled, dialogues which have fewer than (1+utterances_to_predict) will be left out. This ensures that the model is always conditioning on some context.")
+                        help="If enabled, dialogues which have fewer than (1+utterances_to_predict) will be left out. "
+                             "This ensures that the model is always conditioning on some context.")
 
     return parser.parse_args()
 
@@ -78,12 +72,12 @@ def main():
     state = prototype_state()
     state_path = args.model_prefix + "_state.pkl"
     with open(state_path) as src:
-        state.update(cPickle.load(src))
+        state.update(pickle.load(src))
 
     # Load dictionary
 
     # Load dictionaries to convert str to idx and vice-versa
-    raw_dict = cPickle.load(open(state['dictionary'], 'r'))
+    raw_dict = pickle.load(open(state['dictionary'], 'r'))
 
     str_to_idx = dict([(tok, tok_id) for tok, tok_id, _, _ in raw_dict])
     idx_to_str = dict([(tok_id, tok) for tok, tok_id, freq, _ in raw_dict])
@@ -96,11 +90,10 @@ def main():
 
     # Is it a pickle file? Then process using model dictionaries..
     if args.test_file[len(args.test_file) - 4:len(args.test_file)] == '.pkl':
-        test_dialogues = cPickle.load(open(args.test_file, 'r'))
-        for test_dialogueid, test_dialogue in enumerate(test_dialogues):
-            if test_dialogueid % 100 == 0:
-                print
-                'test_dialogue', test_dialogueid
+        test_dialogues = pickle.load(open(args.test_file, 'r'))
+        for test_dialogue_id, test_dialogue in enumerate(test_dialogues):
+            if test_dialogue_id % 100 == 0:
+                print('test_dialogue', test_dialogue_id)
 
             utterances = []
             current_utterance = []
@@ -116,8 +109,8 @@ def main():
 
             context_utterances = []
             prediction_utterances = []
-            for utteranceid, utterance in enumerate(utterances):
-                if utteranceid >= len(utterances) - utterances_to_predict:
+            for utterance_id, utterance in enumerate(utterances):
+                if utterance_id >= len(utterances) - utterances_to_predict:
                     prediction_utterances += utterance
                 else:
                     context_utterances += utterance
@@ -136,10 +129,9 @@ def main():
         if len(lines):
             test_dialogues = [x.strip() for x in lines]
 
-        for test_dialogueid, test_dialogue in enumerate(test_dialogues):
-            if test_dialogueid % 100 == 0:
-                print
-                'test_dialogue', test_dialogueid
+        for test_dialogue_id, test_dialogue in enumerate(test_dialogues):
+            if test_dialogue_id % 100 == 0:
+                print('test_dialogue', test_dialogue_id)
 
             utterances = []
             current_utterance = []
@@ -155,8 +147,8 @@ def main():
 
             context_utterances = []
             prediction_utterances = []
-            for utteranceid, utterance in enumerate(utterances):
-                if utteranceid >= len(utterances) - utterances_to_predict:
+            for utterance_id, utterance in enumerate(utterances):
+                if utterance_id >= len(utterances) - utterances_to_predict:
                     prediction_utterances += utterance
                 else:
                     context_utterances += utterance
@@ -169,13 +161,11 @@ def main():
             test_responses += ' '.join(prediction_utterances) + '\n'
 
     print('Writing to files...')
-    f = open('test_contexts.txt', 'w')
-    f.write(test_contexts)
-    f.close()
+    with open('test_contexts.txt', 'w') as f:
+        f.write(test_contexts)
 
-    f = open('test_responses.txt', 'w')
-    f.write(test_responses)
-    f.close()
+    with open('test_responses.txt', 'w') as f:
+        f.write(test_responses)
 
     print('All done!')
 

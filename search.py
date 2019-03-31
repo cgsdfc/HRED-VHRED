@@ -1,19 +1,7 @@
 #!/usr/bin/env python
 
-import argparse
-import cPickle
-import traceback
 import logging
-import time
-import sys
-
-import os
 import numpy
-import codecs
-
-from dialog_encdec import DialogEncoderDecoder
-from numpy_compat import argpartition
-from state import prototype_state
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +24,7 @@ def sample_wrapper(sample_logic):
             if verbose:
                 logger.info("Searching for {}".format(context_utterances))
 
-            # Convert contextes into list of ids
+            # Convert contexts into list of ids
             joined_context = []
             if len(context_utterances) == 0:
                 joined_context = [sampler.model.eos_sym]
@@ -61,12 +49,11 @@ def sample_wrapper(sample_logic):
                 lambda sample: sampler.model.indices_to_words(sample, exclude_end_sym=kwargs.get('n_turns', 1) == 1),
                 samples)
             # Join the list of words
-            converted_samples = map(' '.join, converted_samples)
+            converted_samples = list(map(' '.join, converted_samples))
 
             if verbose:
                 for i in range(len(converted_samples)):
-                    print
-                    "{}: {}".format(costs[i], converted_samples[i].encode('utf-8'))
+                    print("{}: {}".format(costs[i], converted_samples[i].encode('utf-8')))
 
             context_samples.append(converted_samples)
             context_costs.append(costs)
@@ -183,7 +170,7 @@ class Sampler(object):
             # at both session level and query level.
             # Stack only when we sampled something
             if k > 0:
-                context = numpy.vstack([context, \
+                context = numpy.vstack([context,
                                         numpy.array(map(lambda g: g[-1], gen))]).astype('int32')
                 reversed_context = numpy.copy(context)
                 for idx in range(context.shape[1]):
@@ -224,14 +211,14 @@ class Sampler(object):
             next_costs = numpy.array(costs)[:, None] - numpy.log(next_probs)
 
             # Select next words here
-            (beam_indx, word_indx), costs = self.select_next_words(next_costs, next_probs, k, n_samples)
+            (beam_index, word_index), costs = self.select_next_words(next_costs, next_probs, k, n_samples)
 
             # Update the stacks
             new_gen = []
             new_costs = []
             new_sources = []
 
-            for num, (beam_ind, word_ind, cost) in enumerate(zip(beam_indx, word_indx, costs)):
+            for num, (beam_ind, word_ind, cost) in enumerate(zip(beam_index, word_index, costs)):
                 if len(new_gen) > n_samples:
                     break
 
@@ -265,7 +252,7 @@ class Sampler(object):
                     # TODO: pick the one with lowest cost 
                     has_similar = False
                     if self.hyp_rec > 0:
-                        has_similar = len([g for g in new_gen if \
+                        has_similar = len([g for g in new_gen if
                                            g[-self.hyp_rec:] == hypothesis[-self.hyp_rec:]]) != 0
 
                     if not has_similar:
@@ -294,8 +281,7 @@ class Sampler(object):
 
             # Normalize costs
         if normalize_by_length:
-            fin_costs = [(fin_costs[num] / len(fin_gen[num])) \
-                         for num in range(len(fin_gen))]
+            fin_costs = [(fin_costs[num] / len(fin_gen[num])) for num in range(len(fin_gen))]
 
         fin_gen = numpy.array(fin_gen)[numpy.argsort(fin_costs)]
         fin_costs = numpy.array(sorted(fin_costs))
@@ -311,12 +297,12 @@ class RandomSampler(Sampler):
     def select_next_words(self, next_costs, next_probs, step_num, how_many):
         # Choice is complaining
         next_probs = next_probs.astype("float64")
-        word_indx = numpy.array([self.model.rng.choice(self.model.idim, p=x / numpy.sum(x))
-                                 for x in next_probs], dtype='int32')
-        beam_indx = range(next_probs.shape[0])
+        word_index = numpy.array([self.model.rng.choice(self.model.idim, p=x / numpy.sum(x))
+                                  for x in next_probs], dtype='int32')
+        beam_index = range(next_probs.shape[0])
 
-        args = numpy.ravel_multi_index(numpy.array([beam_indx, word_indx]), next_costs.shape)
-        return (beam_indx, word_indx), next_costs.flatten()[args]
+        args = numpy.ravel_multi_index(numpy.array([beam_index, word_index]), next_costs.shape)
+        return (beam_index, word_index), next_costs.flatten()[args]
 
 
 class BeamSampler(Sampler):

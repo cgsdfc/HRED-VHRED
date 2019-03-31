@@ -14,31 +14,24 @@ THEANO_FLAGS=mode=FAST_RUN,device=gpu,floatX=float32,allow_gc=True,scan.allow_gc
 """
 
 import argparse
-import cPickle
-import traceback
 import logging
-import time
-import sys
-
-import os
-import numpy
-import codecs
 import math
+import os
+import pickle
 
-from dialog_encdec import DialogEncoderDecoder
-from numpy_compat import argpartition
-from state import *
+import numpy
 from data_iterator import get_test_iterator
-
-import matplotlib
-
-matplotlib.use('Agg')
-import pylab
+from dialog_encdec import DialogEncoderDecoder
+from state import *
 
 logger = logging.getLogger(__name__)
 
-# List of all 77 English pronouns, all puntucation signs included in Movie-Scriptolog and other special tokens.
-stopwords = "all another any anybody anyone anything both each each other either everybody everyone everything few he her hers herself him himself his I it its itself many me mine more most much myself neither no one nobody none nothing one one another other others ours ourselves several she some somebody someone something that their theirs them themselves these they this those us we what whatever which whichever who whoever whom whomever whose you your yours yourself yourselves . , ? ' - -- ! <unk> </s> <s>"
+# List of all 77 English pronouns, all punctuation signs included in Movie-Scriptolog and other special tokens.
+stopwords = "all another any anybody anyone anything both each each other either everybody everyone everything" \
+            " few he her hers herself him himself his I it its itself many me mine more most much myself neither" \
+            " no one nobody none nothing one one another other others ours ourselves several she some somebody" \
+            " someone something that their theirs them themselves these they this those us we what whatever" \
+            " which whichever who whoever whom whomever whose you your yours yourself yourselves . , ? ' - -- ! <unk> </s> <s>"
 
 
 def parse_args():
@@ -51,11 +44,17 @@ def parse_args():
                         type=str, help="File of test data")
 
     parser.add_argument("--exclude-stop-words", action="store_true",
-                        help="Exclude stop words (English pronouns, puntucation signs and special tokens) from all metrics. These words make up approximate 48.37% of the training set, so removing them should focus the metrics on the topical content and ignore syntatic errors.")
+                        help="Exclude stop words "
+                             "(English pronouns, punctuation signs and special tokens) from all metrics."
+                             " These words make up approximate 48.37% of the training set,"
+                             " so removing them should focus the metrics on the topical content and ignore syntactic errors.")
 
     parser.add_argument("--document-ids",
                         type=str,
-                        help="File containing document ids for each triple (one id per line, if there are multiple tabs the first entry will be taken as the doc id). If this is given the script will compute standard deviations across documents for all metrics. CURRENTLY NOT IMPLEMENTED.")
+                        help="File containing document ids for each triple "
+                             "(one id per line, if there are multiple tabs the first entry will be taken as the doc id)."
+                             " If this is given the script will compute standard deviations across documents for all metrics."
+                             " CURRENTLY NOT IMPLEMENTED.")
 
     return parser.parse_args()
 
@@ -68,7 +67,7 @@ def main():
     model_path = args.model_prefix + "_model.npz"
 
     with open(state_path) as src:
-        state.update(cPickle.load(src))
+        state.update(pickle.load(src))
 
     logging.basicConfig(level=getattr(logging, state['level']),
                         format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
@@ -110,14 +109,13 @@ def main():
         assert (test_data.data_len == document_ids.shape[0])
 
     else:
-        print
-        'Warning no file with document ids given... standard deviations cannot be computed.'
-        document_ids = numpy.zeros((test_data.data_len), dtype='int32')
+        print('Warning no file with document ids given... standard deviations cannot be computed.')
+        document_ids = numpy.zeros(test_data.data_len, dtype='int32')
         unique_document_ids = numpy.unique(document_ids)
 
     # Variables to store test statistics
     test_cost = 0  # negative log-likelihood
-    test_wordpreds_done = 0  # number of words in total
+    test_word_preds_done = 0  # number of words in total
 
     # Number of triples in dataset
     test_data_len = test_data.data_len
@@ -159,25 +157,20 @@ def main():
 
         test_cost += c
 
-        words_in_triples = numpy.sum(x_cost_mask, axis=0)
-
         if numpy.isinf(c) or numpy.isnan(c):
             continue
 
         if numpy.isinf(c) or numpy.isnan(c):
             continue
 
-        test_wordpreds_done += batch['num_preds']
+        test_word_preds_done += batch['num_preds']
 
     logger.debug("[TEST END]")
 
-    print
-    'test_wordpreds_done (number of words) ', test_wordpreds_done
-    test_cost /= test_wordpreds_done
+    print('test_word_preds_done (number of words) ', test_word_preds_done)
 
-    print
-    "** test cost (NLL) = %.4f, test word-perplexity = %.4f " % (float(test_cost), float(math.exp(test_cost)))
-
+    test_cost /= test_word_preds_done
+    print("** test cost (NLL) = %.4f, test word-perplexity = %.4f " % (float(test_cost), float(math.exp(test_cost))))
     logger.debug("All done, exiting...")
 
 

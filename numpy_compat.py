@@ -1,13 +1,9 @@
 """
 Compatibility with older numpy's providing argpartition replacement.
 
-"""
-
-'''
 Created on Sep 12, 2014
-
 @author: chorows
-'''
+"""
 
 __all__ = ['argpartition']
 
@@ -25,13 +21,13 @@ else:
         def argpartition(a, kth, axis=-1):
             return bottleneck.argpartsort(a, kth, axis)
     except ImportError:
-        warnings.warn('''Beam search will be slow!
+        warnings.warn("""Beam search will be slow!
 
-Your numpy is old (you have v. %s) and doesn't provide an argpartition function.
+Your numpy is old (you have v. {}) and doesn't provide an argpartition function.
 Either upgrade numpy, or install bottleneck (https://pypi.python.org/pypi/Bottleneck).
 
 If you run this from within LISA lab you probably want to run: pip install bottleneck --user
-''' % (numpy.__version__,))
+""".format(numpy.__version__, ))
 
 
         def argpartition(a, kth, axis=-1, order=None):

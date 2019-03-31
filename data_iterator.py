@@ -1,21 +1,12 @@
-import numpy as np
-import theano
-import theano.tensor as T
-
-import sys, getopt
+import copy
+import itertools
 import logging
+import math
+import numpy
 
+from SS_dataset import *
 from state import *
 from utils import *
-from SS_dataset import *
-
-import itertools
-import sys
-import pickle
-import random
-import datetime
-import math
-import copy
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +34,7 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
         (batch['x'].shape[0], batch['x'].shape[1], state['latent_gaussian_per_utterance_dim']), dtype='float32')
 
     # Go through each sample, find end-of-utterance indices and sample random variables
-    for idx in xrange(batch['x'].shape[1]):
+    for idx in range(batch['x'].shape[1]):
         # Find end-of-utterance indices
         eos_indices = numpy.where(batch['x'][:, idx] == state['eos_sym'])[0].tolist()
 
@@ -66,8 +57,9 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
         # overlaps with the first utterance in the current batch, then we need to copy over 
         # the random variables from the last utterance in the last batch to remain consistent.
         if prev_batch:
-            if ('x_reset' in prev_batch) and (not numpy.sum(numpy.abs(prev_batch['x_reset'])) < 1) \
-                    and ('ran_var_constutterance' in prev_batch):
+            if ('x_reset' in prev_batch
+                    and not numpy.sum(numpy.abs(prev_batch['x_reset'])) < 1
+                    and 'ran_var_constutterance' in prev_batch):
                 prev_ran_vector = prev_batch['ran_var_constutterance'][-1, idx, :]
                 if len(eos_indices) > 1:
                     for j in range(0, eos_indices[1]):
@@ -96,7 +88,7 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
 def create_padded_batch(state, rng, x, force_end_of_utterance_token=False):
     # Find max length in batch
     mx = 0
-    for idx in xrange(len(x[0])):
+    for idx in range(len(x[0])):
         mx = max(mx, len(x[0][idx]))
 
     # Take into account that sometimes we need to add the end-of-utterance symbol at the start
@@ -114,7 +106,7 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token=False):
     # Keep track of number of predictions and maximum dialogue length.
     num_preds = 0
     max_length = 0
-    for idx in xrange(len(x[0])):
+    for idx in range(len(x[0])):
         # Insert sequence idx in a column of matrix X
         dialogue_length = len(x[0][idx])
 
@@ -161,22 +153,17 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token=False):
 
     assert num_preds == numpy.sum(Xmask) - numpy.sum(Xmask[0, :])
 
-    batch = {'x': X, \
-             'x_reversed': X_reversed, \
-             'x_mask': Xmask, \
-             'num_preds': num_preds, \
-             'num_dialogues': len(x[0]), \
-             'max_length': max_length \
-             }
+    batch = {'x': X, 'x_reversed': X_reversed, 'x_mask': Xmask, 'num_preds': num_preds, 'num_dialogues': len(x[0]),
+             'max_length': max_length}
 
     return batch
 
 
 class Iterator(SSIterator):
     def __init__(self, dialogue_file, batch_size, **kwargs):
-        SSIterator.__init__(self, dialogue_file, batch_size, \
-                            seed=kwargs.pop('seed', 1234), \
-                            max_len=kwargs.pop('max_len', -1), \
+        SSIterator.__init__(self, dialogue_file, batch_size,
+                            seed=kwargs.pop('seed', 1234),
+                            max_len=kwargs.pop('max_len', -1),
                             use_infinite_loop=kwargs.pop('use_infinite_loop', False))
 
         self.k_batches = kwargs.pop('sort_k_batches', 20)
@@ -294,7 +281,8 @@ def get_train_iterator(state):
         seed=state['seed'],
         use_infinite_loop=True,
         max_len=-1,
-        evaluate_mode=False)
+        evaluate_mode=False
+    )
 
     valid_data = Iterator(
         state['valid_dialogues'],
@@ -303,7 +291,8 @@ def get_train_iterator(state):
         seed=state['seed'],
         use_infinite_loop=False,
         max_len=-1,
-        evaluate_mode=True)
+        evaluate_mode=True
+    )
     return train_data, valid_data
 
 
@@ -318,5 +307,6 @@ def get_test_iterator(state):
         seed=state['seed'],
         use_infinite_loop=False,
         max_len=-1,
-        evaluate_mode=True)
+        evaluate_mode=True
+    )
     return test_data

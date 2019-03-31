@@ -1,20 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-import cPickle
-import traceback
 import logging
-import time
-import sys
-
 import os
-import numpy
-import codecs
-import search
-import utils
+import pickle
+import time
 
+import search
 from dialog_encdec import DialogEncoderDecoder
-from numpy_compat import argpartition
 from state import prototype_state
 
 logger = logging.getLogger(__name__)
@@ -41,27 +34,19 @@ def parse_args():
     parser.add_argument("model_prefix",
                         help="Path to the model prefix (without _model.npz or _state.pkl)")
 
-    parser.add_argument("context",
-                        help="File of input contexts")
+    parser.add_argument("context", help="File of input contexts")
 
-    parser.add_argument("output",
-                        help="Output file")
+    parser.add_argument("output", help="Output file")
 
     parser.add_argument("--beam_search",
                         action="store_true",
                         help="Use beam search instead of random search")
 
-    parser.add_argument("--n-samples",
-                        default="1", type=int,
-                        help="Number of samples")
+    parser.add_argument("--n-samples", default=1, type=int, help="Number of samples")
 
-    parser.add_argument("--n-turns",
-                        default=1, type=int,
-                        help="Number of dialog turns to generate")
+    parser.add_argument("--n-turns", default=1, type=int, help="Number of dialog turns to generate")
 
-    parser.add_argument("--verbose",
-                        action="store_true", default=False,
-                        help="Be verbose")
+    parser.add_argument("--verbose", action="store_true", help="Be verbose")
 
     parser.add_argument("changes", nargs="?", default="", help="Changes to state")
     return parser.parse_args()
@@ -75,7 +60,7 @@ def main():
     model_path = args.model_prefix + "_model.npz"
 
     with open(state_path) as src:
-        state.update(cPickle.load(src))
+        state.update(pickle.load(src))
 
     logging.basicConfig(level=getattr(logging, state['level']),
                         format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
@@ -98,19 +83,22 @@ def main():
         contexts = [x.strip() for x in lines]
 
     print('Sampling started...')
-    context_samples, context_costs = sampler.sample(contexts,
-                                                    n_samples=args.n_samples,
-                                                    n_turns=args.n_turns,
-                                                    ignore_unk=args.ignore_unk,
-                                                    verbose=args.verbose)
+    context_samples, context_costs = sampler.sample(
+        contexts,
+        n_samples=args.n_samples,
+        n_turns=args.n_turns,
+        ignore_unk=args.ignore_unk,
+        verbose=args.verbose
+    )
+
     print('Sampling finished.')
     print('Saving to file...')
 
     # Write to output file
-    output_handle = open(args.output, "w")
-    for context_sample in context_samples:
-        print >> output_handle, '\t'.join(context_sample)
-    output_handle.close()
+    with open(args.output, "w") as output_handle:
+        for context_sample in context_samples:
+            print('\t'.join(context_sample), file=output_handle)
+
     print('Saving to file finished.')
     print('All done!')
 

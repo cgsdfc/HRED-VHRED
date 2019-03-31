@@ -1,31 +1,20 @@
 #!/usr/bin/env python
 __docformat__ = 'restructedtext en'
-__authors__ = ("Iulian Serban, Alessandro Sordoni")
+__authors__ = "Iulian Serban, Alessandro Sordoni"
 __contact__ = "Iulian Serban <julianserban@gmail.com>"
 
 import argparse
-import cPickle
-import traceback
+import collections
 import itertools
 import logging
-import time
-import sys
-import search
-
-import collections
-import string
 import os
-import numpy
-import codecs
+import pickle
+import time
 
-import nltk
-from random import randint
-
-from dialog_encdec import DialogEncoderDecoder
-from numpy_compat import argpartition
-from state import prototype_state
-
+import search
 import theano
+from dialog_encdec import DialogEncoderDecoder
+from state import prototype_state
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +30,9 @@ class Timer(object):
         self.total += time.time() - self.start_time
 
 
-def sample(model, seqs=[[]], n_samples=1, sampler=None, ignore_unk=False):
+def sample(model, seqs=None, n_samples=1, sampler=None, ignore_unk=False):
+    if seqs is None:
+        seqs = [[]]
     if sampler:
         context_samples, context_costs = sampler.sample(seqs,
                                                         n_samples=n_samples,
@@ -90,7 +81,7 @@ def main():
     model_path = args.model_prefix + "_model.npz"
 
     with open(state_path) as src:
-        state.update(cPickle.load(src))
+        state.update(pickle.load(src))
 
     logging.basicConfig(level=getattr(logging, state['level']),
                         format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
@@ -110,8 +101,8 @@ def main():
     # Start chat loop
     utterances = collections.deque()
 
-    while (True):
-        var = raw_input("User - ")
+    while True:
+        var = input("User - ")
 
         # Increase number of utterances. We just set it to zero for simplicity so that model has no memory.
         # But it works fine if we increase this number
@@ -125,8 +116,8 @@ def main():
         seqs = list(itertools.chain(*utterances))
 
         # TODO Retrieve only replies which are generated for second speaker...
-        sentences = sample(model, \
-                           seqs=[seqs], ignore_unk=args.ignore_unk, \
+        sentences = sample(model,
+                           seqs=[seqs], ignore_unk=args.ignore_unk,
                            sampler=sampler, n_samples=5)
 
         if len(sentences) == 0:
@@ -135,8 +126,7 @@ def main():
         utterances.append(sentences[0][0].split())
 
         reply = sentences[0][0].encode('utf-8')
-        print
-        "AI - ", remove_speaker_tokens(reply)
+        print("AI - ", remove_speaker_tokens(reply))
 
 
 if __name__ == "__main__":
@@ -144,5 +134,4 @@ if __name__ == "__main__":
 
     # Models only run with float32
     assert (theano.config.floatX == 'float32')
-
     main()

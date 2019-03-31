@@ -23,21 +23,12 @@
 ##------------------------------------------------------------------------------##
 
 import argparse
-import cPickle
-import traceback
 import logging
-import time
-import sys
-import math
-
 import os
-import numpy
-import codecs
-import search
-import utils
+import pickle
 
+import numpy
 from dialog_encdec import DialogEncoderDecoder
-from numpy_compat import argpartition
 from state import prototype_state
 
 logger = logging.getLogger(__name__)
@@ -56,13 +47,11 @@ def build_text_context(sentenceID, dictionary, nb_sentences_back):
     childID = dictionary[sentenceID][1]
 
     if childID == "None":
-        print
-        "----> First segment. No context available."
+        print("----> First segment. No context available.")
         return "no_context"
 
     else:
         parentID = sentenceID
-        newSentence = ""
 
         for i in range(nb_sentences_back):
             childID = dictionary[parentID][1]
@@ -71,20 +60,15 @@ def build_text_context(sentenceID, dictionary, nb_sentences_back):
                 context.append(newSentence)
                 parentID = childID
             else:
-                print
-                "----> Reached the beginning."
-                print
-                "----> Context (sentence, non chronological): ", context
+                print("----> Reached the beginning.")
+                print("----> Context (sentence, non chronological): ", context)
                 context = context[::-1]
-                print
-                "----> Context (sentence, chronological): ", context
+                print("----> Context (sentence, chronological): ", context)
                 return context
 
-        print
-        "----> Context (sentence, non chronological): ", context
+        print("----> Context (sentence, non chronological): ", context)
         context = context[::-1]
-        print
-        "----> Context (sentence, chronological): ", context
+        print("----> Context (sentence, chronological): ", context)
         return context
 
 
@@ -132,10 +116,8 @@ def compute_encoding(model, encodingFunc, context, reversed_context, max_length)
     updated_context = numpy.array(context, ndmin=2, dtype="int32")
     updated_reversed_context = numpy.array(reversed_context, ndmin=2, dtype="int32")
 
-    print
-    "----> Updated context:", updated_context
-    print
-    "----> Updated reversed context:", updated_reversed_context
+    print("----> Updated context:", updated_context)
+    print("----> Updated reversed context:", updated_reversed_context)
 
     # We transpose to get a column vector. Otherwise, the encoding function thinks you have a bunch of one word sentence.
     # In that case, you always ends with the sames 3 vectors. ( Why three? Who knows...) 
@@ -146,17 +128,13 @@ def compute_encoding(model, encodingFunc, context, reversed_context, max_length)
     hs = encoder_states[1]  # The encoder returns h and hs (in this order) we want the latter.
 
     # The shape of your encoding should be in the end (1, N). N being usually in the thousands. 
-    print
-    "----> hs shape before ", hs.shape
-    print
-    "----> hs[:, -1, :] shape ", numpy.shape(hs[:, -1, :])
-    print
-    "----> hs[-1, :, :] shape ", numpy.shape(hs[-1, :, :])
-    print
-    "----> hs[:, :, -1] shape ", numpy.shape(hs[:, :, -1])
+    print("----> hs shape before ", hs.shape)
+    print("----> hs[:, -1, :] shape ", numpy.shape(hs[:, -1, :]))
+    print("----> hs[-1, :, :] shape ", numpy.shape(hs[-1, :, :]))
+    print("----> hs[:, :, -1] shape ", numpy.shape(hs[:, :, -1]))
 
     # Get embedding at the last end-of-sentence / end-of-utterance token
-    # This is necessary if we padd context with zeros at the end.
+    # This is necessary if we pad context with zeros at the end.
     # Otherwise, it won't do anything :)
     last_eos_index = -1
     for i in range(len(context)):
@@ -178,8 +156,7 @@ def compute_encoding_trunc(model, encodingFunc, context, reversed_context, max_l
     semantic_info = numpy.zeros((1, 1), dtype='int32')  # Once again, legacy.
 
     if context_length < max_length:
-        print
-        "----> Smaller than max length"
+        print("----> Smaller than max length")
         updated_context = numpy.zeros(context_length, dtype='int32')
         updated_reversed_context = numpy.zeros(context_length, dtype='int32')
 
@@ -189,8 +166,7 @@ def compute_encoding_trunc(model, encodingFunc, context, reversed_context, max_l
     else:
 
         # If context is longer the max context, truncate it and force the end-of-utterance token at the end
-        print
-        "----> Longer than max length"
+        print("----> Longer than max length")
 
         updated_context = numpy.zeros(max_length, dtype='int32')  # max_length, dtype='int32')
         updated_reversed_context = numpy.zeros(max_length, dtype='int32')
@@ -238,10 +214,8 @@ def get_all_encodings(model, encoding_func, sentenceDict, max_length, nb_sent_ba
     sentenceNb = 1  # Count the number of processed sentences. Gives an idea to where you are in the batch.
 
     for keys in sentenceDict:
-        print
-        "\n----> Sentence Number ", sentenceNb
-        print
-        "----> Sentence Name ", keys
+        print("\n----> Sentence Number ", sentenceNb)
+        print("----> Sentence Name ", keys)
 
         encodingDict[keys] = get_encoding(model, encoding_func, keys, sentenceDict, max_length, nb_sent_back)
 
@@ -250,11 +224,10 @@ def get_all_encodings(model, encoding_func, sentenceDict, max_length, nb_sent_ba
         # print "middle", encodingDict[keys][0,1000:1050]
         # print "end", encodingDict[keys][0,1950:]
 
-    print
-    "----> Dummping the encodings..."
-    cPickle.dump(encodingDict, open(outputName + ".pkl", "w"))
-    print
-    "\tL----> Done."
+    print("----> Dumping the encodings...")
+    with open(outputName + ".pkl", "w") as f:
+        pickle.dump(encodingDict, f)
+    print("\tL----> Done.")
 
     return encodingDict
 
@@ -270,7 +243,7 @@ def init(path):
     model_path = path + "_model.npz"
 
     with open(state_path) as src:
-        state.update(cPickle.load(src))
+        state.update(pickle.load(src))
 
     logging.basicConfig(level=getattr(logging, state['level']),
                         format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
@@ -291,65 +264,70 @@ def init(path):
 def main(**kwargs):
     args = parse_args()
 
-    sentenceDict = cPickle.load(open(args.sentenceDict, "rb"))
+    with open(args.sentenceDict, "rb") as f:
+        sentenceDict = pickle.load(f)
 
     model, encoding_function = init(args.model_path)
 
     if args.batch:
-        print
-        "---> Computing encoding in batch..."
-        print
-        args.sentenceDict
-        get_all_encodings(model, encoding_function, sentenceDict, args.max_length, args.nback, args.output_name)
-        print
-        "\tL----> All done."
+        print("---> Computing encoding in batch...")
+        print(args.sentenceDict,
+              get_all_encodings(model, encoding_function, sentenceDict, args.max_length, args.nback, args.output_name))
+        print("\tL----> All done.")
 
     if args.one_sentence:
 
-        print
-        "---> Computing encoding for ", args.sentenceID
+        print("---> Computing encoding for ", args.sentenceID)
         encoding = get_hidden_state(model, encoding_function, args.sentence_ID, sentenceDict, args.max_length,
                                     args.nback)
-        print
-        "\tL----> Done."
+        print("\tL----> Done.")
 
         if args.output_name is None:
             name = args.sentenceID
         else:
             name = args.output_name
 
-        print
-        "----> Dummping the encodings..."
-        encoding_pkl = cPickle.dump(encoding, open(name + ".pkl", "wb"))
-        print
-        "\tL----> Done."
+        print("----> Dumping the encodings...")
+        with  open(name + ".pkl", "wb") as f:
+            encoding_pkl = pickle.dump(encoding, f)
+        print("\tL----> Done.")
 
 
 def parse_args():
-    parser = argparse.ArgumentParser("Compute encodings from model, for different context lenghts.")
+    parser = argparse.ArgumentParser("Compute encodings from model, for different context lengths.")
 
     parser.add_argument("--model_path", type=str, help="Path to the model prefix (without _model.npz or _state.pkl).")
-    parser.add_argument("--sentenceDict",
-                        help="Path to the dictionnary. Contain each sentence ID as keys and the sentence and previous ID as values.")
+
+    parser.add_argument("sentenceDict",
+                        help="Path to the dictionary. "
+                             "Contain each sentence ID as keys and the sentence and previous ID as values.")
+
     parser.add_argument("--output_name", type=str, help="Name of the output file.")
 
     parser.add_argument("--one_sentence", action="store_true", help="Compute encodings for one sentence only.")
+
     parser.add_argument("--batch", action="store_true", help="Compute encodings in batch.")
 
     parser.add_argument("--one_set", action="store_true", help="Compute encodings in batch, for one set of context.")
+
     parser.add_argument("--one_model", action="store_true",
                         help="Compute encodings in batch, for one particular model.")
+
     parser.add_argument("--one_nback", action="store_true",
-                        help="Compute encodings in batch, for one particular context lenght.")
+                        help="Compute encodings in batch, for one particular context length.")
 
     parser.add_argument("--all_sets", action="store_true",
                         help="Compute encodings in batch, for training, validation and test sets.")
     parser.add_argument("--all_models", action="store_true", help="Compute encodings in batch, for different model.")
 
     parser.add_argument("--nback", type=int, default=4,
-                        help="Number of sentences back to use to build context. The current sentence doesn't count in nback and is not included in your context.")
+                        help="Number of sentences back to use to build context. "
+                             "The current sentence doesn't count in nback and is not included in your context.")
+
     parser.add_argument("--full_context", action="store_true",
-                        help="Get the full lenght of the context. For each sentence, the context go back until reaching the begining of the movie.")
+                        help="Get the full length of the context. For each sentence,"
+                             " the context go back until reaching the beginning of the movie.")
+
     parser.add_argument("--max_length", type=int, default=200, help="Max number of words in the context.")
 
     parser.add_argument("--sentence_ID", type=str,
