@@ -28,10 +28,10 @@ Bootstrapping Dialog Systems with Word Embeddings. G. Forgues, J. Pineau, J. Lar
 __docformat__ = 'restructedtext en'
 __authors__ = ("Chia-Wei Liu", "Iulian Vlad Serban")
 
-from random import randint
-from gensim.models import Word2Vec
-import numpy as np
 import argparse
+
+import numpy as np
+from gensim.models import Word2Vec
 
 
 def greedy_match(fileone, filetwo, w2v):
@@ -47,7 +47,7 @@ def greedy_score(fileone, filetwo, w2v):
     f2 = open(filetwo, 'r')
     r1 = f1.readlines()
     r2 = f2.readlines()
-    dim = w2v.layer1_size  # embedding dimensions
+    dim = w2v.vector_size  # embedding dimensions
 
     scores = []
 

@@ -1,25 +1,26 @@
 #!/usr/bin/env python
 
 import argparse
-import logging
 import math
 import os
 import os.path
-import pickle
 import pprint
 import signal
 import sys
 import time
 from os import listdir
 from os.path import isfile, join
-
+import logging
 import gc
+import pickle
 import numpy
+import theano
+
+import state as prototype_states
 import search
-from data_iterator import *
-from dialog_encdec import *
-from state import *
-from utils import *
+from data_iterator import get_train_iterator, add_random_variables_to_batch
+from dialog_encdec import DialogEncoderDecoder
+from utils import ConvertTimedelta
 
 
 class Unbuffered:
@@ -88,7 +89,7 @@ def main(args):
     logging.basicConfig(level=logging.DEBUG,
                         format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
 
-    state = eval(args.prototype)()
+    state = eval(args.prototype, prototype_states.__dict__)()
     timings = init_timings()
 
     auto_restarting = False
@@ -558,15 +559,18 @@ def parse_args():
                         help="If true, will save a unique copy of the model at every validation round.")
 
     parser.add_argument("--auto_restart", action='store_true',
-                        help="If true, will maintain a copy of the current model parameters updated at every validation round."
-                             " Upon initialization, the script will automatically scan the output directory and and resume training of a previous model"
-                             " (if such exists). This option is meant to be used for training models on clusters with hard wall-times. "
-                             "This option is incompatible with the \"resume\" and \"save_every_valid_iteration\" options.")
+                        help="If true, will maintain a copy of the current model parameters updated at "
+                             "every validation round.Upon initialization, the script will automatically scan the "
+                             " output directory and and resume training of a previous model(if such exists). This "
+                             " option is meant to be used for training models on clusters with hard wall-times. This "
+                             "option is incompatible with the \"resume\" and \"save_every_valid_iteration\" options.")
 
     parser.add_argument("--prototype", type=str, help="Prototype to use (must be specified)", default='prototype_state')
 
     parser.add_argument("--reinitialize-latent-variable-parameters", action='store_true',
-                        help="Can be used when resuming a model. If true, will initialize all latent variable parameters randomly instead of loading them from previous model.")
+                        help="Can be used when resuming a model."
+                             " If true, will initialize all latent variable parameters randomly instead of "
+                             "loading them from previous model.")
 
     parser.add_argument("--reinitialize-decoder-parameters", action='store_true',
                         help="Can be used when resuming a model. "
