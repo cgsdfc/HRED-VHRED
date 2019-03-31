@@ -39,7 +39,8 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
         return batch
 
     # Variable to store random vector sampled at the beginning of each utterance
-    Ran_Var_ConstUtterance = numpy.zeros((batch['x'].shape[0], batch['x'].shape[1], state['latent_gaussian_per_utterance_dim']), dtype='float32')
+    Ran_Var_ConstUtterance = numpy.zeros(
+        (batch['x'].shape[0], batch['x'].shape[1], state['latent_gaussian_per_utterance_dim']), dtype='float32')
 
     # Go through each sample, find end-of-utterance indices and sample random variables
     for idx in xrange(batch['x'].shape[1]):
@@ -57,8 +58,8 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
 
         # Sample random variables using NumPy
         ran_vectors = rng.normal(loc=0, scale=1, size=(len(eos_indices), state['latent_gaussian_per_utterance_dim']))
-        for i in range(len(eos_indices)-1):
-            for j in range(eos_indices[i], eos_indices[i+1]):
+        for i in range(len(eos_indices) - 1):
+            for j in range(eos_indices[i], eos_indices[i + 1]):
                 Ran_Var_ConstUtterance[j, idx, :] = ran_vectors[i, :]
 
         # If a previous batch is given, and the last utterance in the previous batch
@@ -66,8 +67,8 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
         # the random variables from the last utterance in the last batch to remain consistent.
         if prev_batch:
             if ('x_reset' in prev_batch) and (not numpy.sum(numpy.abs(prev_batch['x_reset'])) < 1) \
-              and ('ran_var_constutterance' in prev_batch):
-                prev_ran_vector = prev_batch['ran_var_constutterance'][-1,idx,:]
+                    and ('ran_var_constutterance' in prev_batch):
+                prev_ran_vector = prev_batch['ran_var_constutterance'][-1, idx, :]
                 if len(eos_indices) > 1:
                     for j in range(0, eos_indices[1]):
                         Ran_Var_ConstUtterance[j, idx, :] = prev_ran_vector
@@ -84,15 +85,15 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
     else:
         if state.get('decoder_drop_previous_input_tokens', False):
             ran_drop = rng.uniform(size=(batch['x'].shape[0], batch['x'].shape[1]))
-            batch['ran_decoder_drop_mask'] = (ran_drop <= state['decoder_drop_previous_input_tokens_rate']).astype('float32')
+            batch['ran_decoder_drop_mask'] = (ran_drop <= state['decoder_drop_previous_input_tokens_rate']).astype(
+                'float32')
         else:
             batch['ran_decoder_drop_mask'] = numpy.ones((batch['x'].shape[0], batch['x'].shape[1]), dtype='float32')
-
 
     return batch
 
 
-def create_padded_batch(state, rng, x, force_end_of_utterance_token = False):
+def create_padded_batch(state, rng, x, force_end_of_utterance_token=False):
     # Find max length in batch
     mx = 0
     for idx in xrange(len(x[0])):
@@ -101,10 +102,10 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token = False):
     # Take into account that sometimes we need to add the end-of-utterance symbol at the start
     mx += 1
 
-    n = state['bs'] 
-    
+    n = state['bs']
+
     X = numpy.zeros((mx, n), dtype='int32')
-    Xmask = numpy.zeros((mx, n), dtype='float32') 
+    Xmask = numpy.zeros((mx, n), dtype='float32')
 
     # Variable to store each utterance in reverse form (for bidirectional RNNs)
     X_reversed = numpy.zeros((mx, n), dtype='int32')
@@ -118,13 +119,13 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token = False):
         dialogue_length = len(x[0][idx])
 
         # Fiddle-it if it is too long ..
-        if mx < dialogue_length: 
+        if mx < dialogue_length:
             continue
 
         # Make sure end-of-utterance symbol is at beginning of dialogue.
         # This will force model to generate first utterance too
         if not x[0][idx][0] == state['eos_sym']:
-            X[:dialogue_length+1, idx] = [state['eos_sym']] + x[0][idx][:dialogue_length]
+            X[:dialogue_length + 1, idx] = [state['eos_sym']] + x[0][idx][:dialogue_length]
             dialogue_length = dialogue_length + 1
         else:
             X[:dialogue_length, idx] = x[0][idx][:dialogue_length]
@@ -134,7 +135,7 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token = False):
 
         # Set the number of predictions == sum(Xmask), for cost purposes, minus one (to exclude first eos symbol)
         num_preds += dialogue_length - 1
-        
+
         # Mark the end of phrase
         if len(x[0][idx]) < mx:
             if force_end_of_utterance_token:
@@ -153,29 +154,29 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token = False):
         X_reversed[:, idx] = X[:, idx]
         prev_eos_index = -1
         for eos_index in eos_indices:
-            X_reversed[(prev_eos_index+1):eos_index, idx] = (X_reversed[(prev_eos_index+1):eos_index, idx])[::-1]
+            X_reversed[(prev_eos_index + 1):eos_index, idx] = (X_reversed[(prev_eos_index + 1):eos_index, idx])[::-1]
             prev_eos_index = eos_index
             if prev_eos_index > dialogue_length:
                 break
 
-
     assert num_preds == numpy.sum(Xmask) - numpy.sum(Xmask[0, :])
 
-    batch = {'x': X,                                                 \
-             'x_reversed': X_reversed,                               \
-             'x_mask': Xmask,                                        \
-             'num_preds': num_preds,                                 \
-             'num_dialogues': len(x[0]),                             \
-             'max_length': max_length                                \
-            }
+    batch = {'x': X, \
+             'x_reversed': X_reversed, \
+             'x_mask': Xmask, \
+             'num_preds': num_preds, \
+             'num_dialogues': len(x[0]), \
+             'max_length': max_length \
+             }
 
     return batch
 
+
 class Iterator(SSIterator):
     def __init__(self, dialogue_file, batch_size, **kwargs):
-        SSIterator.__init__(self, dialogue_file, batch_size,                          \
-                            seed=kwargs.pop('seed', 1234),                            \
-                            max_len=kwargs.pop('max_len', -1),                        \
+        SSIterator.__init__(self, dialogue_file, batch_size, \
+                            seed=kwargs.pop('seed', 1234), \
+                            max_len=kwargs.pop('max_len', -1), \
                             use_infinite_loop=kwargs.pop('use_infinite_loop', False))
 
         self.k_batches = kwargs.pop('sort_k_batches', 20)
@@ -189,21 +190,21 @@ class Iterator(SSIterator):
 
         # Store whether the iterator operates in evaluate mode or not
         self.evaluate_mode = kwargs.pop('evaluate_mode', False)
-        print 'Data Iterator Evaluate Mode: ', self.evaluate_mode
+        print('Data Iterator Evaluate Mode: ', self.evaluate_mode)
 
-    def get_homogenous_batch_iter(self, batch_size = -1):
+    def get_homogenous_batch_iter(self, batch_size=-1):
         while True:
-            batch_size = self.batch_size if (batch_size == -1) else batch_size 
-           
+            batch_size = self.batch_size if (batch_size == -1) else batch_size
+
             data = []
             for k in range(self.k_batches):
                 batch = SSIterator.next(self)
                 if batch:
                     data.append(batch)
-            
+
             if not len(data):
                 return
-            
+
             number_of_batches = len(data)
             data = list(itertools.chain.from_iterable(data))
 
@@ -216,7 +217,7 @@ class Iterator(SSIterator):
 
             lens = numpy.asarray([map(len, x)])
             order = numpy.argsort(lens.max(axis=0))
-                 
+
             for k in range(number_of_batches):
                 indices = order[k * batch_size:(k + 1) * batch_size]
                 full_batch = create_padded_batch(self.state, self.rng, [x[indices]])
@@ -240,7 +241,7 @@ class Iterator(SSIterator):
                     batch['x_reversed'] = full_batch['x_reversed'][start_pos:end_pos, :]
                     batch['x_mask'] = full_batch['x_mask'][start_pos:end_pos, :]
                     batch['max_length'] = end_pos - start_pos
-                    batch['num_preds'] = numpy.sum(batch['x_mask']) - numpy.sum(batch['x_mask'][0,:])
+                    batch['num_preds'] = numpy.sum(batch['x_mask']) - numpy.sum(batch['x_mask'][0, :])
 
                     # For each batch we compute the number of dialogues as a fraction of the full batch,
                     # that way, when we add them together, we get the total number of dialogues.
@@ -250,18 +251,17 @@ class Iterator(SSIterator):
                     batches.append(batch)
 
                 if len(batches) > 0:
-                    batches[len(batches)-1]['x_reset'] = numpy.zeros(self.state['bs'], dtype='float32')
+                    batches[len(batches) - 1]['x_reset'] = numpy.zeros(self.state['bs'], dtype='float32')
 
                 for batch in batches:
                     if batch:
                         yield batch
 
-
     def start(self):
         SSIterator.start(self)
         self.batch_iter = None
 
-    def next(self, batch_size = -1):
+    def next(self, batch_size=-1):
         """ 
         We can specify a batch size,
         independent of the object initialization. 
@@ -285,6 +285,7 @@ class Iterator(SSIterator):
             return None
         return batch
 
+
 def get_train_iterator(state):
     train_data = Iterator(
         state['train_dialogues'],
@@ -294,7 +295,7 @@ def get_train_iterator(state):
         use_infinite_loop=True,
         max_len=-1,
         evaluate_mode=False)
-     
+
     valid_data = Iterator(
         state['valid_dialogues'],
         int(state['bs']),
@@ -303,7 +304,8 @@ def get_train_iterator(state):
         use_infinite_loop=False,
         max_len=-1,
         evaluate_mode=True)
-    return train_data, valid_data 
+    return train_data, valid_data
+
 
 def get_test_iterator(state):
     assert 'test_dialogues' in state
@@ -311,7 +313,7 @@ def get_test_iterator(state):
 
     test_data = Iterator(
         test_path,
-        int(state['bs']), 
+        int(state['bs']),
         state=state,
         seed=state['seed'],
         use_infinite_loop=False,

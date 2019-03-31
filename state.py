@@ -2,34 +2,34 @@ from collections import OrderedDict
 import cPickle
 import os
 
+
 def prototype_state():
-    state = {} 
+    state = {}
 
     # ----- CONSTANTS -----
     # Random seed
     state['seed'] = 1234
-    
+
     # Logging level
     state['level'] = 'DEBUG'
 
     # Out-of-vocabulary token string
     state['oov'] = '<unk>'
-    
+
     # These are end-of-sequence marks
     state['end_sym_utterance'] = '</s>'
 
     # Special tokens need to be defined here, because model architecture may adapt depending on these
-    state['unk_sym'] = 0 # Unknown word token <unk>
-    state['eos_sym'] = 1 # end-of-utterance symbol </s>
-    state['eod_sym'] = 2 # end-of-dialogue symbol </d>
-    state['first_speaker_sym'] = 3 # first speaker symbol <first_speaker>
-    state['second_speaker_sym'] = 4 # second speaker symbol <second_speaker>
-    state['third_speaker_sym'] = 5 # third speaker symbol <third_speaker>
-    state['minor_speaker_sym'] = 6 # minor speaker symbol <minor_speaker>
-    state['voice_over_sym'] = 7 # voice over symbol <voice_over>
-    state['off_screen_sym'] = 8 # off screen symbol <off_screen>
-    state['pause_sym'] = 9 # pause symbol <pause>
-
+    state['unk_sym'] = 0  # Unknown word token <unk>
+    state['eos_sym'] = 1  # end-of-utterance symbol </s>
+    state['eod_sym'] = 2  # end-of-dialogue symbol </d>
+    state['first_speaker_sym'] = 3  # first speaker symbol <first_speaker>
+    state['second_speaker_sym'] = 4  # second speaker symbol <second_speaker>
+    state['third_speaker_sym'] = 5  # third speaker symbol <third_speaker>
+    state['minor_speaker_sym'] = 6  # minor speaker symbol <minor_speaker>
+    state['voice_over_sym'] = 7  # voice over symbol <voice_over>
+    state['off_screen_sym'] = 8  # off screen symbol <off_screen>
+    state['pause_sym'] = 9  # pause symbol <pause>
 
     # ----- MODEL ARCHITECTURE -----
     # If this flag is on, the hidden state between RNNs in subsequences is always initialized to zero.
@@ -52,7 +52,7 @@ def prototype_state():
     state['sent_rec_activation'] = 'lambda x: T.tanh(x)'
     # The dialogue encoder activation function
     state['dialogue_rec_activation'] = 'lambda x: T.tanh(x)'
-    
+
     # Determines how to input the utterance encoder and dialogue encoder into the utterance decoder RNN hidden state:
     #  - 'first': initializes first hidden state of decoder using encoders
     #  - 'all': initializes first hidden state of decoder using encoders, 
@@ -63,12 +63,12 @@ def prototype_state():
     #                 to turn off certain dimensions if necessary.
     #
     # Experiments show that 'all' is most effective.
-    state['decoder_bias_type'] = 'all' 
+    state['decoder_bias_type'] = 'all'
 
     # Define the gating function for the three RNNs.
-    state['utterance_encoder_gating'] = 'GRU' # Supports 'None' and 'GRU'
-    state['dialogue_encoder_gating'] = 'GRU' # Supports 'None' and 'GRU'
-    state['utterance_decoder_gating'] = 'GRU' # Supports 'None', 'GRU' and 'LSTM'
+    state['utterance_encoder_gating'] = 'GRU'  # Supports 'None' and 'GRU'
+    state['dialogue_encoder_gating'] = 'GRU'  # Supports 'None' and 'GRU'
+    state['utterance_decoder_gating'] = 'GRU'  # Supports 'None', 'GRU' and 'LSTM'
 
     # If this flag is on, two utterances encoders (one forward and one backward) will be used,
     # otherwise only a forward utterance encoder is used.
@@ -92,7 +92,6 @@ def prototype_state():
     # If this flag is on, the utterance encoder will be reset after each end-of-utterance token.
     state['reset_utterance_encoder_at_end_of_utterance'] = True
 
-
     # ----- HIDDEN LAYER DIMENSIONS -----
     # Dimensionality of (word-level) utterance encoder hidden state
     state['qdim_encoder'] = 512
@@ -102,7 +101,6 @@ def prototype_state():
     state['sdim'] = 1000
     # Dimensionality of low-rank word embedding approximation
     state['rankdim'] = 256
-
 
     # ----- LATENT VARIABLES WITH VARIATIONAL LEARNING -----
     # If this flag is on, a Gaussian latent variable is added at the beginning of each utterance.
@@ -142,7 +140,7 @@ def prototype_state():
     # It is truncated to one. For example, 1.0/60000.0 means that at iteration 60000 the model
     # will assign weight one to the KL-divergence term
     # and thus only be maximizing the true variational bound from iteration 60000 and onward.
-    state['kl_divergence_annealing_rate'] = 1.0/60000.0
+    state['kl_divergence_annealing_rate'] = 1.0 / 60000.0
 
     # If this flag is enabled, previous token input to the decoder RNN is replaced with 'unk' tokens at random.
     state['decoder_drop_previous_input_tokens'] = False
@@ -158,7 +156,6 @@ def prototype_state():
     # If this flag is on, the model will fix the parameters of the utterance encoder and dialogue encoder RNNs,
     # as well as the word embeddings. NOTE: NOT APPLICABLE when the flag 'collaps_to_standard_rnn' is on.
     state['fix_encoder_parameters'] = False
-
 
     # ----- TRAINING PROCEDURE -----
     # Choose optimization algorithm (adam works well most of the time)
@@ -194,15 +191,16 @@ def prototype_state():
     # Number of batches to process
     state['loop_iters'] = 3000000
     # Maximum number of minutes to run
-    state['time_stop'] = 24*60*31
+    state['time_stop'] = 24 * 60 * 31
     # Error level to stop at
     state['minerr'] = -1
 
     return state
 
+
 def prototype_test():
     state = prototype_state()
-    
+
     # Fill paths here! 
     state['train_dialogues'] = "./tests/data/ttrain.dialogues.pkl"
     state['test_dialogues'] = "./tests/data/ttest.dialogues.pkl"
@@ -211,19 +209,19 @@ def prototype_test():
     state['save_dir'] = "./tests/models/"
 
     state['max_grad_steps'] = 20
-    
+
     # Handle pretrained word embeddings. Using this requires rankdim=10
     state['initialize_from_pretrained_word_embeddings'] = False
-    state['pretrained_word_embeddings_file'] = './tests/data/MT_WordEmb.pkl' 
+    state['pretrained_word_embeddings_file'] = './tests/data/MT_WordEmb.pkl'
     state['fix_pretrained_word_embeddings'] = False
-    
+
     state['valid_freq'] = 50
 
     state['collaps_to_standard_rnn'] = False
-    
-    state['prefix'] = "testmodel_" 
+
+    state['prefix'] = "testmodel_"
     state['updater'] = 'adam'
-    
+
     state['maxout_out'] = False
     state['deep_out'] = True
     state['deep_dialogue_input'] = True
@@ -231,14 +229,14 @@ def prototype_test():
     state['utterance_encoder_gating'] = 'GRU'
     state['dialogue_encoder_gating'] = 'GRU'
     state['utterance_decoder_gating'] = 'GRU'
-    state['bidirectional_utterance_encoder'] = True 
+    state['bidirectional_utterance_encoder'] = True
     state['direct_connection_between_encoders_and_decoder'] = True
 
     state['bs'] = 5
     state['sort_k_batches'] = 1
     state['use_nce'] = False
     state['decoder_bias_type'] = 'all'
-    
+
     state['qdim_encoder'] = 15
     state['qdim_decoder'] = 5
     state['sdim'] = 10
@@ -246,9 +244,10 @@ def prototype_test():
 
     return state
 
+
 def prototype_test_variational():
     state = prototype_state()
-    
+
     # Fill paths here! 
     state['train_dialogues'] = "./tests/data/ttrain.dialogues.pkl"
     state['test_dialogues'] = "./tests/data/ttest.dialogues.pkl"
@@ -260,16 +259,16 @@ def prototype_test_variational():
 
     # Handle pretrained word embeddings. Using this requires rankdim=10
     state['initialize_from_pretrained_word_embeddings'] = True
-    state['pretrained_word_embeddings_file'] = './tests/data/MT_WordEmb.pkl' 
+    state['pretrained_word_embeddings_file'] = './tests/data/MT_WordEmb.pkl'
     state['fix_pretrained_word_embeddings'] = True
-    
+
     state['valid_freq'] = 5
 
     state['collaps_to_standard_rnn'] = False
-    
-    state['prefix'] = "testmodel_" 
+
+    state['prefix'] = "testmodel_"
     state['updater'] = 'adam'
-    
+
     state['maxout_out'] = False
     state['deep_out'] = True
     state['deep_dialogue_input'] = True
@@ -286,18 +285,17 @@ def prototype_test_variational():
     state['condition_latent_variable_on_dialogue_encoder'] = True
     state['condition_latent_variable_on_dcgm_encoder'] = False
     state['train_latent_gaussians_with_kl_divergence_annealing'] = True
-    state['kl_divergence_annealing_rate'] = 1.0/60000.0
+    state['kl_divergence_annealing_rate'] = 1.0 / 60000.0
     state['latent_gaussian_linear_dynamics'] = True
 
     state['decoder_drop_previous_input_tokens'] = True
     state['decoder_drop_previous_input_tokens_rate'] = 0.75
 
-
     state['bs'] = 5
     state['sort_k_batches'] = 1
     state['use_nce'] = False
     state['decoder_bias_type'] = 'all'
-    
+
     state['qdim_encoder'] = 15
     state['qdim_decoder'] = 5
     state['sdim'] = 10
@@ -310,26 +308,26 @@ def prototype_test_variational():
 # by Serban et al. (2016).
 def prototype_twitter_lstm():
     state = prototype_state()
-    
+
     state['train_dialogues'] = "../TwitterData/Training.dialogues.pkl"
     state['test_dialogues'] = "../TwitterData/Test.dialogues.pkl"
     state['valid_dialogues'] = "../TwitterData/Validation.dialogues.pkl"
-    state['dictionary'] = "../TwitterData/Dataset.dict.pkl" 
-    state['save_dir'] = "Output" 
+    state['dictionary'] = "../TwitterData/Dataset.dict.pkl"
+    state['save_dir'] = "Output"
 
     state['max_grad_steps'] = 80
-    
+
     state['valid_freq'] = 5000
-    
-    state['prefix'] = "TwitterModel_" 
+
+    state['prefix'] = "TwitterModel_"
     state['updater'] = 'adam'
-    
+
     state['deep_dialogue_input'] = True
     state['deep_out'] = True
 
     state['collaps_to_standard_rnn'] = True
- 
-    state['bs'] = 80 
+
+    state['bs'] = 80
     state['decoder_bias_type'] = 'all'
     state['direct_connection_between_encoders_and_decoder'] = False
     state['deep_direct_connection'] = False
@@ -338,15 +336,12 @@ def prototype_twitter_lstm():
     state['reset_utterance_encoder_at_end_of_utterance'] = False
     state['lr'] = 0.0001
 
-
     state['qdim_encoder'] = 10
     state['qdim_decoder'] = 2000
     state['sdim'] = 10
     state['rankdim'] = 400
 
     return state
-
-
 
 
 # Twitter HRED model used in "A Hierarchical Latent Variable Encoder-Decoder Model for Generating Dialogues"
@@ -379,8 +374,8 @@ def prototype_twitter_HRED():
     state['deep_dialogue_input'] = True
     state['deep_out'] = True
 
-    state['bs'] = 80 # If out of memory, modify this!
-    state['decoder_bias_type'] = 'selective' # Choose between 'first', 'all' and 'selective'
+    state['bs'] = 80  # If out of memory, modify this!
+    state['decoder_bias_type'] = 'selective'  # Choose between 'first', 'all' and 'selective'
     state['direct_connection_between_encoders_and_decoder'] = False
     state['deep_direct_connection'] = False
 
@@ -421,8 +416,8 @@ def prototype_twitter_HRED_StandardBias():
     state['deep_dialogue_input'] = True
     state['deep_out'] = True
 
-    state['bs'] = 80 # If out of memory, modify this!
-    state['decoder_bias_type'] = 'all' # Choose between 'first', 'all' and 'selective'
+    state['bs'] = 80  # If out of memory, modify this!
+    state['decoder_bias_type'] = 'all'  # Choose between 'first', 'all' and 'selective'
     state['direct_connection_between_encoders_and_decoder'] = False
     state['deep_direct_connection'] = False
 
@@ -438,7 +433,6 @@ def prototype_twitter_HRED_StandardBias():
     state['utterance_decoder_gating'] = 'LSTM'
 
     return state
-
 
 
 # Twitter VHRED model used in "A Hierarchical Latent Variable Encoder-Decoder Model for Generating Dialogues"
@@ -462,13 +456,11 @@ def prototype_twitter_VHRED():
 
     state['bidirectional_utterance_encoder'] = True
 
-
-
     state['deep_dialogue_input'] = True
     state['deep_out'] = True
 
     state['bs'] = 80
-    state['decoder_bias_type'] = 'selective' # Choose between 'first', 'all' and 'selective'
+    state['decoder_bias_type'] = 'selective'  # Choose between 'first', 'all' and 'selective'
     state['direct_connection_between_encoders_and_decoder'] = False
     state['deep_direct_connection'] = False
 
@@ -483,15 +475,13 @@ def prototype_twitter_VHRED():
 
     state['utterance_decoder_gating'] = 'GRU'
 
-
     state['add_latent_gaussian_per_utterance'] = True
     state['latent_gaussian_per_utterance_dim'] = 100
-
 
     state['scale_latent_variable_variances'] = 0.1
     state['condition_latent_variable_on_dialogue_encoder'] = True
     state['train_latent_gaussians_with_kl_divergence_annealing'] = True
-    state['kl_divergence_annealing_rate'] = 1.0/60000.0
+    state['kl_divergence_annealing_rate'] = 1.0 / 60000.0
     state['decoder_drop_previous_input_tokens'] = True
     state['decoder_drop_previous_input_tokens_rate'] = 0.75
 
@@ -521,13 +511,11 @@ def prototype_twitter_VHRED_StandardBias():
 
     state['bidirectional_utterance_encoder'] = True
 
-
-
     state['deep_dialogue_input'] = True
     state['deep_out'] = True
 
     state['bs'] = 80
-    state['decoder_bias_type'] = 'all' # Choose between 'first', 'all' and 'selective'
+    state['decoder_bias_type'] = 'all'  # Choose between 'first', 'all' and 'selective'
     state['direct_connection_between_encoders_and_decoder'] = False
     state['deep_direct_connection'] = False
 
@@ -542,15 +530,13 @@ def prototype_twitter_VHRED_StandardBias():
 
     state['utterance_decoder_gating'] = 'LSTM'
 
-
     state['add_latent_gaussian_per_utterance'] = True
     state['latent_gaussian_per_utterance_dim'] = 100
-
 
     state['scale_latent_variable_variances'] = 0.1
     state['condition_latent_variable_on_dialogue_encoder'] = True
     state['train_latent_gaussians_with_kl_divergence_annealing'] = True
-    state['kl_divergence_annealing_rate'] = 1.0/60000.0
+    state['kl_divergence_annealing_rate'] = 1.0 / 60000.0
     state['decoder_drop_previous_input_tokens'] = True
     state['decoder_drop_previous_input_tokens_rate'] = 0.75
 
@@ -566,16 +552,16 @@ def prototype_ubuntu_LSTM():
 
     state['end_sym_utterance'] = '__eot__'
 
-    state['unk_sym'] = 0 # Unknown word token <unk>
-    state['eos_sym'] = 1 # end-of-utterance symbol </s>
-    state['eod_sym'] = -1 # end-of-dialogue symbol </d>
-    state['first_speaker_sym'] = -1 # first speaker symbol <first_speaker>
-    state['second_speaker_sym'] = -1 # second speaker symbol <second_speaker>
-    state['third_speaker_sym'] = -1 # third speaker symbol <third_speaker>
-    state['minor_speaker_sym'] = -1 # minor speaker symbol <minor_speaker>
-    state['voice_over_sym'] = -1 # voice over symbol <voice_over>
-    state['off_screen_sym'] = -1 # off screen symbol <off_screen>
-    state['pause_sym'] = -1 # pause symbol <pause>
+    state['unk_sym'] = 0  # Unknown word token <unk>
+    state['eos_sym'] = 1  # end-of-utterance symbol </s>
+    state['eod_sym'] = -1  # end-of-dialogue symbol </d>
+    state['first_speaker_sym'] = -1  # first speaker symbol <first_speaker>
+    state['second_speaker_sym'] = -1  # second speaker symbol <second_speaker>
+    state['third_speaker_sym'] = -1  # third speaker symbol <third_speaker>
+    state['minor_speaker_sym'] = -1  # minor speaker symbol <minor_speaker>
+    state['voice_over_sym'] = -1  # voice over symbol <voice_over>
+    state['off_screen_sym'] = -1  # off screen symbol <off_screen>
+    state['pause_sym'] = -1  # pause symbol <pause>
 
     state['train_dialogues'] = "../UbuntuData/Training.dialogues.pkl"
     state['test_dialogues'] = "../UbuntuData/Test.dialogues.pkl"
@@ -610,10 +596,9 @@ def prototype_ubuntu_LSTM():
     state['sdim'] = 10
     state['rankdim'] = 300
 
-    state['utterance_decoder_gating'] = 'LSTM' # Supports 'None', 'GRU' and 'LSTM'
+    state['utterance_decoder_gating'] = 'LSTM'  # Supports 'None', 'GRU' and 'LSTM'
 
     return state
-
 
 
 # Ubuntu HRED model used in "A Hierarchical Latent Variable Encoder-Decoder Model for Generating Dialogues"
@@ -623,16 +608,16 @@ def prototype_ubuntu_HRED():
 
     state['end_sym_utterance'] = '__eot__'
 
-    state['unk_sym'] = 0 # Unknown word token <unk>
-    state['eos_sym'] = 1 # end-of-utterance symbol </s>
-    state['eod_sym'] = -1 # end-of-dialogue symbol </d>
-    state['first_speaker_sym'] = -1 # first speaker symbol <first_speaker>
-    state['second_speaker_sym'] = -1 # second speaker symbol <second_speaker>
-    state['third_speaker_sym'] = -1 # third speaker symbol <third_speaker>
-    state['minor_speaker_sym'] = -1 # minor speaker symbol <minor_speaker>
-    state['voice_over_sym'] = -1 # voice over symbol <voice_over>
-    state['off_screen_sym'] = -1 # off screen symbol <off_screen>
-    state['pause_sym'] = -1 # pause symbol <pause>
+    state['unk_sym'] = 0  # Unknown word token <unk>
+    state['eos_sym'] = 1  # end-of-utterance symbol </s>
+    state['eod_sym'] = -1  # end-of-dialogue symbol </d>
+    state['first_speaker_sym'] = -1  # first speaker symbol <first_speaker>
+    state['second_speaker_sym'] = -1  # second speaker symbol <second_speaker>
+    state['third_speaker_sym'] = -1  # third speaker symbol <third_speaker>
+    state['minor_speaker_sym'] = -1  # minor speaker symbol <minor_speaker>
+    state['voice_over_sym'] = -1  # voice over symbol <voice_over>
+    state['off_screen_sym'] = -1  # off screen symbol <off_screen>
+    state['pause_sym'] = -1  # pause symbol <pause>
 
     state['train_dialogues'] = "../UbuntuData/Training.dialogues.pkl"
     state['test_dialogues'] = "../UbuntuData/Test.dialogues.pkl"
@@ -667,7 +652,6 @@ def prototype_ubuntu_HRED():
     return state
 
 
-
 # Ubuntu VHRED model used in "A Hierarchical Latent Variable Encoder-Decoder Model for Generating Dialogues"
 # by Serban et al. (2016). Note, this model was pretrained as the HRED model with state 'prototype_ubuntu_HRED'!
 def prototype_ubuntu_VHRED():
@@ -675,16 +659,16 @@ def prototype_ubuntu_VHRED():
 
     state['end_sym_utterance'] = '__eot__'
 
-    state['unk_sym'] = 0 # Unknown word token <unk>
-    state['eos_sym'] = 1 # end-of-utterance symbol </s>
-    state['eod_sym'] = -1 # end-of-dialogue symbol </d>
-    state['first_speaker_sym'] = -1 # first speaker symbol <first_speaker>
-    state['second_speaker_sym'] = -1 # second speaker symbol <second_speaker>
-    state['third_speaker_sym'] = -1 # third speaker symbol <third_speaker>
-    state['minor_speaker_sym'] = -1 # minor speaker symbol <minor_speaker>
-    state['voice_over_sym'] = -1 # voice over symbol <voice_over>
-    state['off_screen_sym'] = -1 # off screen symbol <off_screen>
-    state['pause_sym'] = -1 # pause symbol <pause>
+    state['unk_sym'] = 0  # Unknown word token <unk>
+    state['eos_sym'] = 1  # end-of-utterance symbol </s>
+    state['eod_sym'] = -1  # end-of-dialogue symbol </d>
+    state['first_speaker_sym'] = -1  # first speaker symbol <first_speaker>
+    state['second_speaker_sym'] = -1  # second speaker symbol <second_speaker>
+    state['third_speaker_sym'] = -1  # third speaker symbol <third_speaker>
+    state['minor_speaker_sym'] = -1  # minor speaker symbol <minor_speaker>
+    state['voice_over_sym'] = -1  # voice over symbol <voice_over>
+    state['off_screen_sym'] = -1  # off screen symbol <off_screen>
+    state['pause_sym'] = -1  # pause symbol <pause>
 
     state['train_dialogues'] = "../UbuntuData/Training.dialogues.pkl"
     state['test_dialogues'] = "../UbuntuData/Test.dialogues.pkl"
@@ -722,11 +706,10 @@ def prototype_ubuntu_VHRED():
     state['scale_latent_variable_variances'] = 0.1
     state['condition_latent_variable_on_dialogue_encoder'] = True
     state['train_latent_gaussians_with_kl_divergence_annealing'] = True
-    state['kl_divergence_annealing_rate'] = 1.0/75000.0
+    state['kl_divergence_annealing_rate'] = 1.0 / 75000.0
     state['decoder_drop_previous_input_tokens'] = True
     state['decoder_drop_previous_input_tokens_rate'] = 0.75
 
     state['patience'] = 20
 
     return state
-

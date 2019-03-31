@@ -1,4 +1,4 @@
-import numpy 
+import numpy
 import os, gc
 import cPickle
 import copy
@@ -11,6 +11,7 @@ import collections
 
 logger = logging.getLogger(__name__)
 
+
 class SSFetcher(threading.Thread):
     def __init__(self, parent):
         threading.Thread.__init__(self)
@@ -22,7 +23,7 @@ class SSFetcher(threading.Thread):
         diter = self.parent
         self.rng.shuffle(self.indexes)
 
-        offset = 0 
+        offset = 0
         while not diter.exit_flag:
             last_batch = False
             dialogues = []
@@ -58,6 +59,7 @@ class SSFetcher(threading.Thread):
             if last_batch:
                 diter.queue.put(None)
                 return
+
 
 class SSIterator(object):
     def __init__(self,
@@ -100,7 +102,7 @@ class SSIterator(object):
     def next(self):
         if self.exit_flag:
             return None
-        
+
         batch = self.queue.get()
         if not batch:
             self.exit_flag = True

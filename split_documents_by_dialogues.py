@@ -8,7 +8,6 @@ Example run:
 @author Iulian Vlad Serban
 """
 
-
 from random import shuffle
 import os
 
@@ -23,18 +22,17 @@ args = parser.parse_args()
 if not os.path.isfile(args.input):
     raise Exception("Input file not found!")
 
-
 data = open(args.input, 'r').readlines()
 
 new_data = []
 for l in data:
     s = l.split(' </d> </s> ')
-    for i in range(len(s)-1):
+    for i in range(len(s) - 1):
         new_data.append(s[i] + ' </d> </s>')
-        
+
 shuffle(new_data)
 
-f = open(args.output,'w')
+f = open(args.output, 'w')
 for i in range(len(new_data)):
     f.write(new_data[i] + '\n')
 

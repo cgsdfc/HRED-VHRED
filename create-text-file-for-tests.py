@@ -32,6 +32,7 @@ import os
 
 from state import prototype_state
 
+
 def indices_to_words(idx_to_str, seq):
     """
     Converts a list of words to a list
@@ -46,28 +47,29 @@ def indices_to_words(idx_to_str, seq):
 
     return r.strip()
 
+
 def parse_args():
     parser = argparse.ArgumentParser("Generate text file with test dialogues")
-    
+
     parser.add_argument("model_prefix",
-            help="Path to the model prefix (without _model.npz or _state.pkl)")
+                        help="Path to the model prefix (without _model.npz or _state.pkl)")
 
     parser.add_argument("test_file",
-            help="Path to the test file (pickled list, with one dialogue per entry; or plain text file with one dialogue per line)")
+                        help="Path to the test file (pickled list, with one dialogue per entry; or plain text file with one dialogue per line)")
 
     parser.add_argument("--utterances_to_predict",
-            type=int, default=1,
-            help="Number of utterances to predict")
+                        type=int, default=1,
+                        help="Number of utterances to predict")
 
     parser.add_argument("--max_words_in_context",
-            type=int, default=-1,
-            help="Number of words in context (if there are more, the beginning of the context will be truncated)")
+                        type=int, default=-1,
+                        help="Number of words in context (if there are more, the beginning of the context will be truncated)")
 
-    parser.add_argument("--leave_out_short_dialogues", action='store_true', help="If enabled, dialogues which have fewer than (1+utterances_to_predict) will be left out. This ensures that the model is always conditioning on some context.")
-
-
+    parser.add_argument("--leave_out_short_dialogues", action='store_true',
+                        help="If enabled, dialogues which have fewer than (1+utterances_to_predict) will be left out. This ensures that the model is always conditioning on some context.")
 
     return parser.parse_args()
+
 
 def main():
     args = parse_args()
@@ -86,7 +88,6 @@ def main():
     str_to_idx = dict([(tok, tok_id) for tok, tok_id, _, _ in raw_dict])
     idx_to_str = dict([(tok_id, tok) for tok, tok_id, freq, _ in raw_dict])
 
-
     assert len(args.test_file) > 3
     test_contexts = ''
     test_responses = ''
@@ -94,11 +95,12 @@ def main():
     assert args.utterances_to_predict > 0
 
     # Is it a pickle file? Then process using model dictionaries..
-    if args.test_file[len(args.test_file)-4:len(args.test_file)] == '.pkl':
+    if args.test_file[len(args.test_file) - 4:len(args.test_file)] == '.pkl':
         test_dialogues = cPickle.load(open(args.test_file, 'r'))
-        for test_dialogueid,test_dialogue in enumerate(test_dialogues):
+        for test_dialogueid, test_dialogue in enumerate(test_dialogues):
             if test_dialogueid % 100 == 0:
-                print 'test_dialogue', test_dialogueid
+                print
+                'test_dialogue', test_dialogueid
 
             utterances = []
             current_utterance = []
@@ -109,7 +111,7 @@ def main():
                     current_utterance = []
 
             if args.leave_out_short_dialogues:
-                if len(utterances) <= utterances_to_predict+1:
+                if len(utterances) <= utterances_to_predict + 1:
                     continue
 
             context_utterances = []
@@ -124,20 +126,20 @@ def main():
                 while len(context_utterances) > args.max_words_in_context:
                     del context_utterances[0]
 
-
             test_contexts += indices_to_words(idx_to_str, context_utterances) + '\n'
             test_responses += indices_to_words(idx_to_str, prediction_utterances) + '\n'
 
-    else: # Assume it's a text file
+    else:  # Assume it's a text file
 
         test_dialogues = [[]]
         lines = open(args.test_file, "r").readlines()
         if len(lines):
             test_dialogues = [x.strip() for x in lines]
 
-        for test_dialogueid,test_dialogue in enumerate(test_dialogues):
+        for test_dialogueid, test_dialogue in enumerate(test_dialogues):
             if test_dialogueid % 100 == 0:
-                print 'test_dialogue', test_dialogueid
+                print
+                'test_dialogue', test_dialogueid
 
             utterances = []
             current_utterance = []
@@ -148,7 +150,7 @@ def main():
                     current_utterance = []
 
             if args.leave_out_short_dialogues:
-                if len(utterances) <= utterances_to_predict+1:
+                if len(utterances) <= utterances_to_predict + 1:
                     continue
 
             context_utterances = []
@@ -163,22 +165,20 @@ def main():
                 while len(context_utterances) > args.max_words_in_context:
                     del context_utterances[0]
 
-
             test_contexts += ' '.join(context_utterances) + '\n'
             test_responses += ' '.join(prediction_utterances) + '\n'
 
-
     print('Writing to files...')
-    f = open('test_contexts.txt','w')
+    f = open('test_contexts.txt', 'w')
     f.write(test_contexts)
     f.close()
 
-    f = open('test_responses.txt','w')
+    f = open('test_responses.txt', 'w')
     f.write(test_responses)
     f.close()
 
     print('All done!')
 
+
 if __name__ == "__main__":
     main()
-

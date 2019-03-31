@@ -20,10 +20,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""    
+"""
 
 import theano
 import theano.tensor as T
+
 
 def sharedX(value, name=None, borrow=False, dtype=None):
     if dtype is None:
@@ -32,12 +33,13 @@ def sharedX(value, name=None, borrow=False, dtype=None):
                          name=name,
                          borrow=borrow)
 
+
 def Adam(grads, lr=0.0002, b1=0.1, b2=0.001, e=1e-8):
     updates = []
     i = sharedX(0.)
     i_t = i + 1.
-    fix1 = 1. - (1. - b1)**i_t
-    fix2 = 1. - (1. - b2)**i_t
+    fix1 = 1. - (1. - b1) ** i_t
+    fix2 = 1. - (1. - b2) ** i_t
     lr_t = lr * (T.sqrt(fix2) / fix1)
     for p, g in grads.items():
         m = sharedX(p.get_value() * 0.)
