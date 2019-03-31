@@ -1,8 +1,9 @@
 import numpy
-import adam
 import theano
 import theano.tensor as T
 from collections import OrderedDict
+
+import adam
 
 PRINT_VARS = True
 
@@ -157,7 +158,7 @@ def OrthogonalInit(rng, sizeX, sizeY, sparsity=-1, scale=1):
         sparsity = numpy.minimum(sizeY, sparsity)
 
     values = numpy.zeros((sizeX, sizeY), dtype=theano.config.floatX)
-    for dx in xrange(sizeX):
+    for dx in range(sizeX):
         perm = rng.permutation(sizeY)
         new_vals = rng.normal(loc=0, scale=scale, size=(sparsity,))
         values[dx, perm[:sparsity]] = new_vals
@@ -198,7 +199,7 @@ def NormalInit(rng, sizeX, sizeY, scale=0.01, sparsity=-1):
 
     sparsity = numpy.minimum(sizeY, sparsity)
     values = numpy.zeros((sizeX, sizeY), dtype=theano.config.floatX)
-    for dx in xrange(sizeX):
+    for dx in range(sizeX):
         perm = rng.permutation(sizeY)
         new_vals = rng.normal(loc=0, scale=scale, size=(sparsity,))
         values[dx, perm[:sparsity]] = new_vals

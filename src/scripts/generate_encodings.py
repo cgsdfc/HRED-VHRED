@@ -276,7 +276,6 @@ def main(**kwargs):
         print("\tL----> All done.")
 
     if args.one_sentence:
-
         print("---> Computing encoding for ", args.sentenceID)
         encoding = get_hidden_state(model, encoding_function, args.sentence_ID, sentenceDict, args.max_length,
                                     args.nback)
@@ -288,7 +287,7 @@ def main(**kwargs):
             name = args.output_name
 
         print("----> Dumping the encodings...")
-        with  open(name + ".pkl", "wb") as f:
+        with open(name + ".pkl", "wb") as f:
             encoding_pkl = pickle.dump(encoding, f)
         print("\tL----> Done.")
 

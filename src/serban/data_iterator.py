@@ -1,12 +1,10 @@
 import copy
 import itertools
-import logging
 import math
-import numpy
+import logging
+import numpy as np
 
-from SS_dataset import *
-from state import *
-from utils import *
+from SS_dataset import SSIterator
 
 logger = logging.getLogger(__name__)
 
@@ -30,13 +28,13 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
         return batch
 
     # Variable to store random vector sampled at the beginning of each utterance
-    Ran_Var_ConstUtterance = numpy.zeros(
+    Ran_Var_ConstUtterance = np.zeros(
         (batch['x'].shape[0], batch['x'].shape[1], state['latent_gaussian_per_utterance_dim']), dtype='float32')
 
     # Go through each sample, find end-of-utterance indices and sample random variables
     for idx in range(batch['x'].shape[1]):
         # Find end-of-utterance indices
-        eos_indices = numpy.where(batch['x'][:, idx] == state['eos_sym'])[0].tolist()
+        eos_indices = np.where(batch['x'][:, idx] == state['eos_sym'])[0].tolist()
 
         # Make sure we also sample at the beginning of the utterance, and that we stop appropriately at the end
         if len(eos_indices) > 0:
@@ -58,7 +56,7 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
         # the random variables from the last utterance in the last batch to remain consistent.
         if prev_batch:
             if ('x_reset' in prev_batch
-                    and not numpy.sum(numpy.abs(prev_batch['x_reset'])) < 1
+                    and not np.sum(np.abs(prev_batch['x_reset'])) < 1
                     and 'ran_var_constutterance' in prev_batch):
                 prev_ran_vector = prev_batch['ran_var_constutterance'][-1, idx, :]
                 if len(eos_indices) > 1:
@@ -73,14 +71,14 @@ def add_random_variables_to_batch(state, rng, batch, prev_batch, evaluate_mode):
 
     # Create word drop mask based on 'decoder_drop_previous_input_tokens_rate' option:
     if evaluate_mode:
-        batch['ran_decoder_drop_mask'] = numpy.ones((batch['x'].shape[0], batch['x'].shape[1]), dtype='float32')
+        batch['ran_decoder_drop_mask'] = np.ones((batch['x'].shape[0], batch['x'].shape[1]), dtype='float32')
     else:
         if state.get('decoder_drop_previous_input_tokens', False):
             ran_drop = rng.uniform(size=(batch['x'].shape[0], batch['x'].shape[1]))
             batch['ran_decoder_drop_mask'] = (ran_drop <= state['decoder_drop_previous_input_tokens_rate']).astype(
                 'float32')
         else:
-            batch['ran_decoder_drop_mask'] = numpy.ones((batch['x'].shape[0], batch['x'].shape[1]), dtype='float32')
+            batch['ran_decoder_drop_mask'] = np.ones((batch['x'].shape[0], batch['x'].shape[1]), dtype='float32')
 
     return batch
 
@@ -96,11 +94,11 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token=False):
 
     n = state['bs']
 
-    X = numpy.zeros((mx, n), dtype='int32')
-    Xmask = numpy.zeros((mx, n), dtype='float32')
+    X = np.zeros((mx, n), dtype='int32')
+    Xmask = np.zeros((mx, n), dtype='float32')
 
     # Variable to store each utterance in reverse form (for bidirectional RNNs)
-    X_reversed = numpy.zeros((mx, n), dtype='int32')
+    X_reversed = np.zeros((mx, n), dtype='int32')
 
     # Fill X and Xmask.
     # Keep track of number of predictions and maximum dialogue length.
@@ -142,7 +140,7 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token=False):
         # Reverse all utterances
         # TODO: For backward compatibility. This should be removed in future versions
         # i.e. move all the x_reversed computations to the model itself.
-        eos_indices = numpy.where(X[:, idx] == state['eos_sym'])[0]
+        eos_indices = np.where(X[:, idx] == state['eos_sym'])[0]
         X_reversed[:, idx] = X[:, idx]
         prev_eos_index = -1
         for eos_index in eos_indices:
@@ -151,7 +149,7 @@ def create_padded_batch(state, rng, x, force_end_of_utterance_token=False):
             if prev_eos_index > dialogue_length:
                 break
 
-    assert num_preds == numpy.sum(Xmask) - numpy.sum(Xmask[0, :])
+    assert num_preds == np.sum(Xmask) - np.sum(Xmask[0, :])
 
     batch = {'x': X, 'x_reversed': X_reversed, 'x_mask': Xmask, 'num_preds': num_preds, 'num_dialogues': len(x[0]),
              'max_length': max_length}
@@ -170,7 +168,7 @@ class Iterator(SSIterator):
         self.state = kwargs.pop('state', None)
 
         self.batch_iter = None
-        self.rng = numpy.random.RandomState(self.state['seed'])
+        self.rng = np.random.RandomState(self.state['seed'])
 
         # Keep track of previous batch, because this is needed to specify random variables
         self.prev_batch = None
@@ -200,10 +198,10 @@ class Iterator(SSIterator):
             for i in range(len(data)):
                 data_x.append(data[i][0])
 
-            x = numpy.asarray(list(itertools.chain(data_x)))
+            x = np.asarray(list(itertools.chain(data_x)))
 
-            lens = numpy.asarray([map(len, x)])
-            order = numpy.argsort(lens.max(axis=0))
+            lens = np.asarray([map(len, x)])
+            order = np.argsort(lens.max(axis=0))
 
             for k in range(number_of_batches):
                 indices = order[k * batch_size:(k + 1) * batch_size]
@@ -228,17 +226,17 @@ class Iterator(SSIterator):
                     batch['x_reversed'] = full_batch['x_reversed'][start_pos:end_pos, :]
                     batch['x_mask'] = full_batch['x_mask'][start_pos:end_pos, :]
                     batch['max_length'] = end_pos - start_pos
-                    batch['num_preds'] = numpy.sum(batch['x_mask']) - numpy.sum(batch['x_mask'][0, :])
+                    batch['num_preds'] = np.sum(batch['x_mask']) - np.sum(batch['x_mask'][0, :])
 
                     # For each batch we compute the number of dialogues as a fraction of the full batch,
                     # that way, when we add them together, we get the total number of dialogues.
                     batch['num_dialogues'] = float(full_batch['num_dialogues']) / float(splits)
-                    batch['x_reset'] = numpy.ones(self.state['bs'], dtype='float32')
+                    batch['x_reset'] = np.ones(self.state['bs'], dtype='float32')
 
                     batches.append(batch)
 
                 if len(batches) > 0:
-                    batches[len(batches) - 1]['x_reset'] = numpy.zeros(self.state['bs'], dtype='float32')
+                    batches[len(batches) - 1]['x_reset'] = np.zeros(self.state['bs'], dtype='float32')
 
                 for batch in batches:
                     if batch:

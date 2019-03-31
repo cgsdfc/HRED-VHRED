@@ -112,7 +112,8 @@ def main():
         current_utterance = [model.end_sym_utterance] + ['<first_speaker>'] + var.split() + [model.end_sym_utterance]
         utterances.append(current_utterance)
 
-        # TODO Sample a random reply. To spice it up, we could pick the longest reply or the reply with the fewest placeholders...
+        # TODO Sample a random reply. To spice it up,
+        # we could pick the longest reply or the reply with the fewest placeholders...
         seqs = list(itertools.chain(*utterances))
 
         # TODO Retrieve only replies which are generated for second speaker...

@@ -3,32 +3,30 @@ Dialog hierarchical encoder-decoder code.
 The code is inspired from nmt encode code in groundhog
 but we do not rely on groundhog infrastructure.
 """
-__docformat__ = 'restructedtext en'
-__authors__ = "Iulian Vlad Serban"
 
-import logging
-import pickle
-
-import numpy as np
-import numpy
-import theano.tensor as T
-
-logger = logging.getLogger(__name__)
-
-from theano.sandbox.rng_mrg import MRG_RandomStreams
-from theano.tensor.nnet.conv3d2d import *
+import theano
 
 from collections import OrderedDict
 
-from model import *
-from utils import *
+from model import Model
+from utils import NormalInit, OrthogonalInit, Adagrad, Adadelta, RMSProp
 
+import logging
+import pickle
 import operator
+import numpy as np
+import theano.tensor as T
+
+from theano.sandbox.rng_mrg import MRG_RandomStreams
+
+__docformat__ = 'restructedtext en'
+__authors__ = "Iulian Vlad Serban"
+
+logger = logging.getLogger(__name__)
 
 
 # Theano speed-up
 # theano.config.scan.allow_gc = False
-#
 
 def add_to_params(params, new_param):
     params.append(new_param)
@@ -183,7 +181,7 @@ class UtteranceEncoder(EncoderDecoderBase):
             ones_vector = T.ones_like(xmask[0, :]).dimshuffle('x', 0)
             rolled_xmask = T.concatenate([ones_vector, xmask], axis=0)
         else:
-            ones_scalar = theano.shared(value=numpy.ones(1, dtype='float32'), name='ones_scalar')
+            ones_scalar = theano.shared(value=np.ones(1, dtype='float32'), name='ones_scalar')
             rolled_xmask = T.concatenate([ones_scalar, xmask])
 
         # GRU Encoder
@@ -1356,9 +1354,9 @@ class DialogEncoderDecoder(Model):
         Reverses the words in each utterance inside a sequence of utterance (e.g. a dialogue)
         This is used for the bidirectional encoder RNN.
         """
-        reversed_seq = numpy.copy(seq)
+        reversed_seq = np.copy(seq)
         for idx in range(seq.shape[1]):
-            eos_indices = numpy.where(seq[:, idx] == self.eos_sym)[0]
+            eos_indices = np.where(seq[:, idx] == self.eos_sym)[0]
             prev_eos_index = -1
             for eos_index in eos_indices:
                 reversed_seq[(prev_eos_index + 1):eos_index, idx] = (reversed_seq[(prev_eos_index + 1):eos_index, idx])[
@@ -1374,7 +1372,7 @@ class DialogEncoderDecoder(Model):
         grads = OrderedDict(zip(params, grads))
 
         # Gradient clipping
-        c = numpy.float32(self.cutoff)
+        c = np.float32(self.cutoff)
         clip_grads = []
 
         norm_gs = T.sqrt(sum(T.sum(g ** 2) for p, g in grads.items()))
@@ -1382,7 +1380,7 @@ class DialogEncoderDecoder(Model):
         notfinite = T.or_(T.isnan(norm_gs), T.isinf(norm_gs))
 
         for p, g in grads.items():
-            clip_grads.append((p, T.switch(notfinite, numpy.float32(.1) * p, g * normalization)))
+            clip_grads.append((p, T.switch(notfinite, np.float32(.1) * p, g * normalization)))
 
         grads = OrderedDict(clip_grads)
 
@@ -1580,13 +1578,13 @@ class DialogEncoderDecoder(Model):
 
                 # Initialize hidden states to zero
                 platent_utterance_variable_approx_posterior = theano.shared(
-                    value=numpy.zeros((self.bs, self.latent_gaussian_per_utterance_dim), dtype='float32'),
+                    value=np.zeros((self.bs, self.latent_gaussian_per_utterance_dim), dtype='float32'),
                     name='encoder_fn_platent_utterance_variable_approx_posterior')
 
                 if self.condition_latent_variable_on_dcgm_encoder:
-                    platent_dcgm_avg = theano.shared(value=numpy.zeros((self.bs, self.rankdim), dtype='float32'),
+                    platent_dcgm_avg = theano.shared(value=np.zeros((self.bs, self.rankdim), dtype='float32'),
                                                      name='encoder_fn_platent_dcgm_avg')
-                    platent_dcgm_n = theano.shared(value=numpy.zeros((1, self.bs), dtype='float32'),
+                    platent_dcgm_n = theano.shared(value=np.zeros((1, self.bs), dtype='float32'),
                                                    name='encoder_fn_platent_dcgm_n')
 
                 # Create computational graph for latent variable
@@ -1699,8 +1697,8 @@ class DialogEncoderDecoder(Model):
         if not state['direct_connection_between_encoders_and_decoder']:
             assert (state['deep_direct_connection'] == False)
 
-        if not 'collaps_to_standard_rnn' in state:
-            state['collaps_to_standard_rnn'] = False
+        if not 'collapse_to_standard_rnn' in state:
+            state['collapse_to_standard_rnn'] = False
 
         if not 'reset_utterance_decoder_at_end_of_utterance' in state:
             state['reset_utterance_decoder_at_end_of_utterance'] = True
@@ -1743,7 +1741,7 @@ class DialogEncoderDecoder(Model):
         if state['train_latent_gaussians_with_kl_divergence_annealing']:
             assert state['kl_divergence_annealing_rate']
 
-        if state['collaps_to_standard_rnn']:
+        if state['collapse_to_standard_rnn']:
             # If we collapse to standard RNN (e.g. LSTM language model) then we should not reset.
             # If we did reset, we'd have a language model over individual utterances, which is what we want!
             assert not state['reset_utterance_decoder_at_end_of_utterance']
@@ -1752,17 +1750,17 @@ class DialogEncoderDecoder(Model):
         self.global_params = []
 
         self.__dict__.update(state)
-        self.rng = numpy.random.RandomState(state['seed'])
+        self.rng = np.random.RandomState(state['seed'])
 
         # Load dictionary
         raw_dict = pickle.load(open(self.dictionary, 'r'))
 
         # Probabilities for each term in the corpus used for noise contrastive estimation (NCE)
         self.noise_probs = [x[2] for x in sorted(raw_dict, key=operator.itemgetter(1))]
-        self.noise_probs = numpy.array(self.noise_probs, dtype='float64')
-        self.noise_probs /= numpy.sum(self.noise_probs)
+        self.noise_probs = np.array(self.noise_probs, dtype='float64')
+        self.noise_probs /= np.sum(self.noise_probs)
         self.noise_probs = self.noise_probs ** 0.75
-        self.noise_probs /= numpy.sum(self.noise_probs)
+        self.noise_probs /= np.sum(self.noise_probs)
 
         self.t_noise_probs = theano.shared(self.noise_probs.astype('float32'), 't_noise_probs')
 
@@ -1820,10 +1818,10 @@ class DialogEncoderDecoder(Model):
             assert (self.idim == pretrained_embeddings[1].shape[0])
             assert (self.rankdim == pretrained_embeddings[1].shape[1])
 
-            self.W_emb_pretrained_mask = theano.shared(pretrained_embeddings[1].astype(numpy.float32),
+            self.W_emb_pretrained_mask = theano.shared(pretrained_embeddings[1].astype(np.float32),
                                                        name='W_emb_mask')
             self.W_emb = add_to_params(self.global_params,
-                                       theano.shared(value=pretrained_embeddings[0].astype(numpy.float32),
+                                       theano.shared(value=pretrained_embeddings[0].astype(np.float32),
                                                      name='W_emb'))
         else:
             # Initialize word embeddings randomly
@@ -1833,40 +1831,40 @@ class DialogEncoderDecoder(Model):
         # Variables to store encoder and decoder states
         if self.bidirectional_utterance_encoder:
             # Previous states variables
-            self.ph_fwd = theano.shared(value=numpy.zeros((self.bs, self.qdim_encoder), dtype='float32'), name='ph_fwd')
-            self.ph_bck = theano.shared(value=numpy.zeros((self.bs, self.qdim_encoder), dtype='float32'), name='ph_bck')
-            self.phs = theano.shared(value=numpy.zeros((self.bs, self.sdim), dtype='float32'), name='phs')
+            self.ph_fwd = theano.shared(value=np.zeros((self.bs, self.qdim_encoder), dtype='float32'), name='ph_fwd')
+            self.ph_bck = theano.shared(value=np.zeros((self.bs, self.qdim_encoder), dtype='float32'), name='ph_bck')
+            self.phs = theano.shared(value=np.zeros((self.bs, self.sdim), dtype='float32'), name='phs')
 
             if self.direct_connection_between_encoders_and_decoder:
-                self.phs_dummy = theano.shared(value=numpy.zeros((self.bs, self.qdim_encoder * 2), dtype='float32'),
+                self.phs_dummy = theano.shared(value=np.zeros((self.bs, self.qdim_encoder * 2), dtype='float32'),
                                                name='phs_dummy')
 
         else:
             # Previous states variables
-            self.ph = theano.shared(value=numpy.zeros((self.bs, self.qdim_encoder), dtype='float32'), name='ph')
-            self.phs = theano.shared(value=numpy.zeros((self.bs, self.sdim), dtype='float32'), name='phs')
+            self.ph = theano.shared(value=np.zeros((self.bs, self.qdim_encoder), dtype='float32'), name='ph')
+            self.phs = theano.shared(value=np.zeros((self.bs, self.sdim), dtype='float32'), name='phs')
 
             if self.direct_connection_between_encoders_and_decoder:
-                self.phs_dummy = theano.shared(value=numpy.zeros((self.bs, self.qdim_encoder), dtype='float32'),
+                self.phs_dummy = theano.shared(value=np.zeros((self.bs, self.qdim_encoder), dtype='float32'),
                                                name='phs_dummy')
 
         if self.utterance_decoder_gating == 'LSTM':
-            self.phd = theano.shared(value=numpy.zeros((self.bs, self.qdim_decoder * 2), dtype='float32'), name='phd')
+            self.phd = theano.shared(value=np.zeros((self.bs, self.qdim_decoder * 2), dtype='float32'), name='phd')
         else:
-            self.phd = theano.shared(value=numpy.zeros((self.bs, self.qdim_decoder), dtype='float32'), name='phd')
+            self.phd = theano.shared(value=np.zeros((self.bs, self.qdim_decoder), dtype='float32'), name='phd')
 
         if self.add_latent_gaussian_per_utterance:
             self.platent_utterance_variable_prior = theano.shared(
-                value=numpy.zeros((self.bs, self.latent_gaussian_per_utterance_dim), dtype='float32'),
+                value=np.zeros((self.bs, self.latent_gaussian_per_utterance_dim), dtype='float32'),
                 name='platent_utterance_variable_prior')
             self.platent_utterance_variable_approx_posterior = theano.shared(
-                value=numpy.zeros((self.bs, self.latent_gaussian_per_utterance_dim), dtype='float32'),
+                value=np.zeros((self.bs, self.latent_gaussian_per_utterance_dim), dtype='float32'),
                 name='platent_utterance_variable_approx_posterior')
 
             if self.condition_latent_variable_on_dcgm_encoder:
-                self.platent_dcgm_avg = theano.shared(value=numpy.zeros((self.bs, self.rankdim), dtype='float32'),
+                self.platent_dcgm_avg = theano.shared(value=np.zeros((self.bs, self.rankdim), dtype='float32'),
                                                       name='platent_dcgm_avg')
-                self.platent_dcgm_n = theano.shared(value=numpy.zeros((1, self.bs), dtype='float32'),
+                self.platent_dcgm_n = theano.shared(value=np.zeros((1, self.bs), dtype='float32'),
                                                     name='platent_dcgm_n')
 
         # Build utterance encoders
@@ -2008,7 +2006,7 @@ class DialogEncoderDecoder(Model):
                    + T.sum(mean_diff_squared / self.latent_utterance_variable_prior_var, axis=2)
                    - state['latent_gaussian_per_utterance_dim']
                    + T.sum(T.log(self.latent_utterance_variable_prior_var), axis=2)
-                   - T.sum(T.log(self.latent_utterance_variable_approx_posterior_var), axis=2) \
+                   - T.sum(T.log(self.latent_utterance_variable_approx_posterior_var), axis=2)
                    ) / 2
 
             self.kl_divergence_cost = kl_divergences_between_prior_and_posterior * latent_variable_mask
@@ -2017,8 +2015,8 @@ class DialogEncoderDecoder(Model):
         else:
             # Set KL divergence cost to zero
             self.kl_divergence_cost = training_x_cost_mask * 0
-            self.kl_divergence_cost_acc = theano.shared(value=numpy.float(0))
-            self.latent_utterance_variable_approx_posterior_mean_var = theano.shared(value=numpy.float(0))
+            self.kl_divergence_cost_acc = theano.shared(value=np.float(0))
+            self.latent_utterance_variable_approx_posterior_mean_var = theano.shared(value=np.float(0))
 
         # We initialize the decoder, and fix its word embeddings to that of the encoder(s)
         logger.debug("Initializing decoder")
@@ -2099,7 +2097,7 @@ class DialogEncoderDecoder(Model):
             if self.train_latent_gaussians_with_kl_divergence_annealing:
                 self.evaluation_cost = self.training_cost + self.kl_divergence_cost_acc
 
-                self.kl_divergence_cost_weight = add_to_params(self.global_params, theano.shared(value=numpy.float32(0),
+                self.kl_divergence_cost_weight = add_to_params(self.global_params, theano.shared(value=np.float32(0),
                                                                                                  name='kl_divergence_cost_weight'))
                 self.training_cost = self.training_cost + self.kl_divergence_cost_weight * self.kl_divergence_cost_acc
             else:
