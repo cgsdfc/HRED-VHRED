@@ -20,7 +20,7 @@ NOTE: It's better to use the original dialogues in plain text for building the c
 import argparse
 import pickle
 
-from state import prototype_state
+from serban.state import prototype_state
 
 
 def indices_to_words(idx_to_str, seq):

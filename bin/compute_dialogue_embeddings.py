@@ -9,23 +9,12 @@ import math
 import os
 import pickle
 import time
-
 import numpy
-from dialog_encoder_decoder import DialogEncoderDecoder
-from state import prototype_state
+
+from serban.dialog_encoder_decoder import DialogEncoderDecoder
+from serban.state import prototype_state
 
 logger = logging.getLogger(__name__)
-
-
-class Timer(object):
-    def __init__(self):
-        self.total = 0
-
-    def start(self):
-        self.start_time = time.time()
-
-    def finish(self):
-        self.total += time.time() - self.start_time
 
 
 def parse_args():
