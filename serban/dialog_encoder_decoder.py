@@ -1810,9 +1810,9 @@ class DialogEncoderDecoder(Model):
         # Build word embeddings, which are shared throughout the model
         if self.initialize_from_pretrained_word_embeddings:
             # Load pretrained word embeddings from pickled file
-            logger.debug("Loading pretrained word embeddings")
+            logger.debug("Loading pretrained word embeddings %s", self.pretrained_word_embeddings_file)
             with open(self.pretrained_word_embeddings_file, 'rb') as f:
-                pretrained_embeddings = pickle.load(f)
+                pretrained_embeddings = pickle.load(f, encoding='bytes')
 
             # Check all dimensions match from the pretrained embeddings
             assert (self.idim == pretrained_embeddings[0].shape[0])

@@ -13,7 +13,7 @@ import time
 
 import search
 import theano
-from dialog_encdec import DialogEncoderDecoder
+from dialog_encoder_decoder import DialogEncoderDecoder
 from state import prototype_state
 
 logger = logging.getLogger(__name__)

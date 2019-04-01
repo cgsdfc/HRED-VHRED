@@ -21,7 +21,7 @@ import pickle
 
 import numpy
 from data_iterator import get_test_iterator
-from dialog_encdec import DialogEncoderDecoder
+from dialog_encoder_decoder import DialogEncoderDecoder
 from state import prototype_state
 
 logger = logging.getLogger(__name__)
