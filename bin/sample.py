@@ -70,6 +70,7 @@ def main():
     else:
         raise ValueError("Must specify a valid model path")
 
+    logging.info('loading context %s', args.context)
     with open(args.context) as f:
         lines = f.readlines()
     logging.info('loaded context, #lines %d', len(lines))

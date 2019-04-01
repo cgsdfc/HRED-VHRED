@@ -65,7 +65,9 @@ def make_metrics():
 
 
 def save(model, timings, post_fix=''):
-    _logger.info("Saving the model...")
+    model_name = model.state['run_id'] + "_" + model.state['prefix'] + post_fix
+
+    _logger.info("Saving the model %s", model_name)
 
     save_dir = model.state['save_dir']
     if not os.path.isdir(save_dir):
@@ -77,21 +79,18 @@ def save(model, timings, post_fix=''):
     s = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     # This is the model weights.
-    filename = model.state['save_dir'].joinpath(
-        model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'model.npz')
+    filename = model.state['save_dir'].joinpath(model_name + 'model.npz')
     model.save(filename)
     _logger.info('saved model weights: %s', filename)
 
     # This is the model hparams.
-    filename = model.state['save_dir'].joinpath(
-        model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'state.pkl')
+    filename = model.state['save_dir'].joinpath(model_name + 'state.pkl')
     with open(filename, 'wb') as f:
         pickle.dump(model.state, f)
     _logger.info('saved model hyperparameters: %s', filename)
 
     # This is the model metrics.
-    filename = model.state['save_dir'].joinpath(
-        model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'timing.npz')
+    filename = model.state['save_dir'].joinpath(model_name + 'timing.npz')
     numpy.savez(filename, **timings)
     _logger.info('saved model metrics: %s', filename)
 
