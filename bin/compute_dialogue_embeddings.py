@@ -118,7 +118,8 @@ def main():
         raise Exception("Must specify a valid model path")
 
     contexts = [[]]
-    lines = open(args.dialogues, "rb").readlines()
+    with  open(args.dialogues, "rb") as f:
+        lines = f.readlines()
     if len(lines):
         contexts = [x.strip() for x in lines]
 

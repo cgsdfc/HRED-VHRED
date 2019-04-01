@@ -80,7 +80,7 @@ def main():
     state_path = args.model_prefix + "_state.pkl"
     model_path = args.model_prefix + "_model.npz"
 
-    with open(state_path) as src:
+    with open(state_path, 'rb') as src:
         state.update(pickle.load(src))
 
     logging.basicConfig(level=getattr(logging, state['level']),

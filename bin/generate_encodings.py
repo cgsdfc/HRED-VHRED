@@ -225,7 +225,7 @@ def get_all_encodings(model, encoding_func, sentenceDict, max_length, nb_sent_ba
         # print "end", encodingDict[keys][0,1950:]
 
     print("----> Dumping the encodings...")
-    with open(outputName + ".pkl", "w") as f:
+    with open(outputName + ".pkl", "wb") as f:
         pickle.dump(encodingDict, f)
     print("\tL----> Done.")
 
@@ -242,7 +242,7 @@ def init(path):
     state_path = path + "_state.pkl"
     model_path = path + "_model.npz"
 
-    with open(state_path) as src:
+    with open(state_path, 'rb') as src:
         state.update(pickle.load(src))
 
     logging.basicConfig(level=getattr(logging, state['level']),

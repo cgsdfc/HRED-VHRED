@@ -50,7 +50,8 @@ if __name__ == '__main__':
     if args.dict != "":
         # Load external dictionary
         assert os.path.isfile(args.dict)
-        vocab = dict([(x[0], x[1]) for x in pickle.load(open(args.dict, "r"))])
+        with open(args.dict, "rb") as f:
+            vocab = dict([(x[0], x[1]) for x in pickle.load(f)])
 
         # Check consistency
         assert '<unk>' in vocab
@@ -68,11 +69,12 @@ if __name__ == '__main__':
     else:
         word_counter = Counter()
 
-        for line in open(args.input, 'r'):
-            line_words = line.strip().split()
-            if line_words[-1] != '</s>':
-                line_words.append('</s>')
-            word_counter.update(line_words)
+        with open(args.input, 'r') as f:
+            for line in f:
+                line_words = line.strip().split()
+                if line_words[-1] != '</s>':
+                    line_words.append('</s>')
+                word_counter.update(line_words)
 
         total_freq = sum(word_counter.values())
         logger.info("Total word frequency in dictionary %d " % total_freq)
@@ -121,28 +123,28 @@ if __name__ == '__main__':
     # counts the number of dialogues each unique word exists in; also known as document frequency
     df = collections.defaultdict(lambda: 0)
 
-    for line, dialogue in enumerate(open(args.input, 'r')):
-        dialogue_words = dialogue.strip().split()
-        if dialogue_words[-1] != '</s>':
-            dialogue_words.append('</s>')
+    with open(args.input, 'r') as f:
+        for line, dialogue in enumerate(f):
+            dialogue_words = dialogue.strip().split()
+            if dialogue_words[-1] != '</s>':
+                dialogue_words.append('</s>')
 
-        # Convert words to token ids and compute some statistics
-        dialogue_word_ids = []
-        for word in dialogue_words:
-            word_id = vocab.get(word, 0)
-            dialogue_word_ids.append(word_id)
-            unknowns += 1 * (word_id == 0)
-            freqs[word_id] += 1
+            # Convert words to token ids and compute some statistics
+            dialogue_word_ids = []
+            for word in dialogue_words:
+                word_id = vocab.get(word, 0)
+                dialogue_word_ids.append(word_id)
+                unknowns += 1 * (word_id == 0)
+                freqs[word_id] += 1
+            num_terms += len(dialogue_words)
 
-        num_terms += len(dialogue_words)
+            # Compute document frequency statistics
+            unique_word_indices = set(dialogue_word_ids)
+            for word_id in unique_word_indices:
+                df[word_id] += 1
 
-        # Compute document frequency statistics
-        unique_word_indices = set(dialogue_word_ids)
-        for word_id in unique_word_indices:
-            df[word_id] += 1
-
-        # Add dialogue to corpus
-        binarized_corpus.append(dialogue_word_ids)
+            # Add dialogue to corpus
+            binarized_corpus.append(dialogue_word_ids)
 
     safe_pickle(binarized_corpus, args.output + ".dialogues.pkl")
 
@@ -154,6 +156,6 @@ if __name__ == '__main__':
 
     logger.info("Number of unknowns %d" % unknowns)
     logger.info("Number of terms %d" % num_terms)
-    logger.info("Mean document length %f" % sum(map(len, binarized_corpus) / len(binarized_corpus)))
+    logger.info("Mean document length %f" % sum(map(len, binarized_corpus)) / len(binarized_corpus))
     logger.info(
         "Writing training %d dialogues (%d left out)" % (len(binarized_corpus), line + 1 - len(binarized_corpus)))

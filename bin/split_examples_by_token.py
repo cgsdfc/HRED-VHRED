@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     logger.info("Loading dialogue corpus")
 
-    with open(args.input, 'r') as f:
+    with open(args.input, 'rb') as f:
         data = pickle.load(f)
     data_len = len(data)
 

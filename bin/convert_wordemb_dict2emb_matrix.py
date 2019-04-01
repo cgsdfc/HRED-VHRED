@@ -119,7 +119,7 @@ if __name__ == '__main__':
         raise Exception("Embedding dictionary file not found!")
 
     # Load model dictionary
-    model_dict = pickle.load(open(args.model_dictionary, 'r'))
+    model_dict = pickle.load(open(args.model_dictionary, 'rb'))
 
     str_to_idx = dict([(tok, tok_id) for tok, tok_id, _, _ in model_dict])
     i_dim = len(str_to_idx.keys())

@@ -200,7 +200,7 @@ class Iterator(SSIterator):
 
             x = np.asarray(list(itertools.chain(data_x)))
 
-            lens = np.asarray([map(len, x)])
+            lens = np.asarray([list(map(len, x))])
             order = np.argsort(lens.max(axis=0))
 
             for k in range(number_of_batches):

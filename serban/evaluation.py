@@ -146,7 +146,7 @@ class Bleu:
         candidate = normalize(candidate)
 
         stats = numpy.zeros((2 * self.n + 1,))
-        stats[-1] = get_ref_length(map(len, refs), len(candidate))
+        stats[-1] = get_ref_length(list(map(len, refs)), len(candidate))
 
         cand_ngram_counts = count_ngrams([candidate], self.n)
         refs_ngram_counts = count_ngrams(refs, self.n)

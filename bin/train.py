@@ -4,6 +4,7 @@ import argparse
 import math
 import os
 import os.path
+import pathlib
 import pprint
 import signal
 import sys
@@ -36,7 +37,7 @@ class Unbuffered:
 
 
 sys.stdout = Unbuffered(sys.stdout)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__file__)
 
 # Unique RUN_ID for this execution
 RUN_ID = str(time.time())
@@ -55,21 +56,26 @@ def init_timings():
 
 def save(model, timings, post_fix=''):
     print("Saving the model...")
+    save_dir: pathlib.Path = model.state['save_dir']
+    if not save_dir.is_dir():
+        save_dir.mkdir()
+        logger.info('saving to directory: %s', save_dir)
 
     # ignore keyboard interrupt while saving
     start = time.time()
     s = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-    model.save(
-        model.state['save_dir'] + '/' + model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'model.npz')
-    pickle.dump(model.state, open(
-        model.state['save_dir'] + '/' + model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'state.pkl',
-        'w'))
-    numpy.savez(
-        model.state['save_dir'] + '/' + model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'timing.npz',
-        **timings)
-    signal.signal(signal.SIGINT, s)
+    filename = model.state['save_dir'].joinpath(model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'model.npz')
+    model.save(filename)
 
+    filename = model.state['save_dir'].joinpath(model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'state.pkl')
+    with open(filename, 'wb') as f:
+        pickle.dump(model.state, f)
+
+    filename = model.state['save_dir'].joinpath(model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'timing.npz')
+    numpy.savez(filename, **timings)
+
+    signal.signal(signal.SIGINT, s)
     print("Model saved, took {}".format(time.time() - start))
 
 
@@ -87,7 +93,7 @@ def load(model, filename, parameter_strings_to_ignore):
 
 def main(args):
     logging.basicConfig(level=logging.DEBUG,
-                        format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
+                        format="%(asctime)s: %(name)s:%(lineno)d: %(levelname)s: %(message)s")
 
     state = eval(args.prototype, prototype_states.__dict__)()
     timings = init_timings()
@@ -135,8 +141,8 @@ def main(args):
         if os.path.isfile(state_file) and os.path.isfile(timings_file):
             logger.debug("Loading previous state")
 
-            state = pickle.load(open(state_file, 'r'))
-            timings = dict(numpy.load(open(timings_file, 'r')))
+            state = pickle.load(open(state_file, 'rb'))
+            timings = dict(numpy.load(open(timings_file, 'rb')))
             for x, y in timings.items():
                 timings[x] = list(y)
 
