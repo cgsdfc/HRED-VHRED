@@ -1,0 +1,810 @@
+ssh://cgsdfc@192.168.1.175:22/home/cgsdfc/miniconda3/envs/HRED-VHRED-env/bin/python -u /home/cgsdfc/tmp/pycharm_project_381/bin/train.py prototype_test
+2019-04-01 16:48:41,003: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:155: DEBUG: State:
+{'add_latent_gaussian_per_utterance': False,
+ 'bidirectional_utterance_encoder': True,
+ 'bs': 5,
+ 'collapse_to_standard_rnn': False,
+ 'condition_decoder_only_on_latent_variable': False,
+ 'condition_latent_variable_on_dcgm_encoder': False,
+ 'condition_latent_variable_on_dialogue_encoder': False,
+ 'cost_threshold': 1.003,
+ 'cutoff': 1.0,
+ 'decoder_bias_type': 'all',
+ 'decoder_drop_previous_input_tokens': False,
+ 'decoder_drop_previous_input_tokens_rate': 0.75,
+ 'deep_dialogue_input': True,
+ 'deep_direct_connection': False,
+ 'deep_out': True,
+ 'dialogue_encoder_gating': 'GRU',
+ 'dialogue_rec_activation': 'lambda x: T.tanh(x)',
+ 'dictionary': PosixPath('/home/cgsdfc/tmp/pycharm_project_381/tests/data/ttrain.dict.pkl'),
+ 'direct_connection_between_encoders_and_decoder': True,
+ 'end_sym_utterance': '</s>',
+ 'eod_sym': 2,
+ 'eos_sym': 1,
+ 'first_speaker_sym': 3,
+ 'fix_encoder_parameters': False,
+ 'fix_pretrained_word_embeddings': False,
+ 'initialize_from_pretrained_word_embeddings': False,
+ 'kl_divergence_annealing_rate': 1.6666666666666667e-05,
+ 'latent_gaussian_linear_dynamics': False,
+ 'latent_gaussian_per_utterance_dim': 10,
+ 'level': 'DEBUG',
+ 'loop_iters': 100,
+ 'lr': 0.0002,
+ 'max_grad_steps': 20,
+ 'maxout_out': False,
+ 'minerr': -1,
+ 'minor_speaker_sym': 6,
+ 'off_screen_sym': 8,
+ 'oov': '<unk>',
+ 'patience': 20,
+ 'pause_sym': 9,
+ 'prefix': 'test_model_',
+ 'pretrained_word_embeddings_file': PosixPath('/home/cgsdfc/tmp/pycharm_project_381/tests/data/MT_WordEmb.pkl'),
+ 'qdim_decoder': 5,
+ 'qdim_encoder': 15,
+ 'rankdim': 10,
+ 'reset_hidden_states_between_subsequences': False,
+ 'reset_utterance_decoder_at_end_of_utterance': True,
+ 'reset_utterance_encoder_at_end_of_utterance': True,
+ 'save_dir': PosixPath('/home/cgsdfc/tmp/pycharm_project_381/tests/models'),
+ 'scale_latent_variable_variances': 10,
+ 'sdim': 10,
+ 'second_speaker_sym': 4,
+ 'seed': 1234,
+ 'sent_rec_activation': 'lambda x: T.tanh(x)',
+ 'sort_k_batches': 1,
+ 'test_dialogues': PosixPath('/home/cgsdfc/tmp/pycharm_project_381/tests/data/ttest.dialogues.pkl'),
+ 'third_speaker_sym': 5,
+ 'time_stop': 44640,
+ 'train_dialogues': PosixPath('/home/cgsdfc/tmp/pycharm_project_381/tests/data/ttrain.dialogues.pkl'),
+ 'train_freq': 10,
+ 'train_latent_gaussians_with_kl_divergence_annealing': False,
+ 'unk_sym': 0,
+ 'updater': 'adam',
+ 'use_nce': False,
+ 'utterance_decoder_gating': 'GRU',
+ 'utterance_encoder_gating': 'GRU',
+ 'valid_dialogues': PosixPath('/home/cgsdfc/tmp/pycharm_project_381/tests/data/tvalid.dialogues.pkl'),
+ 'valid_freq': 50,
+ 'voice_over_sym': 7}
+2019-04-01 16:48:41,004: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:156: DEBUG: Timings:
+{'train_cost': [],
+ 'train_kl_divergence_cost': [],
+ 'train_misclass': [],
+ 'train_posterior_mean_variance': [],
+ 'valid_cost': [],
+ 'valid_emi': [],
+ 'valid_kl_divergence_cost': [],
+ 'valid_misclass': [],
+ 'valid_posterior_mean_variance': []}
+2019-04-01 16:48:41,005: serban.dialog_encdec:1782: DEBUG: idim: 23
+2019-04-01 16:48:41,005: serban.dialog_encdec:1784: DEBUG: Initializing Theano variables
+2019-04-01 16:48:41,010: serban.dialog_encdec:1808: DEBUG: Decoder bias type all
+2019-04-01 16:48:41,013: serban.dialog_encdec:1874: DEBUG: Initializing forward utterance encoder
+2019-04-01 16:48:41,020: serban.dialog_encdec:1876: DEBUG: Build forward utterance encoder
+2019-04-01 16:48:41,200: serban.dialog_encdec:1880: DEBUG: Initializing backward utterance encoder
+2019-04-01 16:48:41,207: serban.dialog_encdec:1882: DEBUG: Build backward utterance encoder
+2019-04-01 16:48:41,236: serban.dialog_encdec:1898: DEBUG: Initializing dialog encoder
+2019-04-01 16:48:41,245: serban.dialog_encdec:1901: DEBUG: Build dialog encoder
+2019-04-01 16:48:41,274: serban.dialog_encdec:2024: DEBUG: Initializing decoder
+2019-04-01 16:48:41,301: serban.dialog_encdec:2028: DEBUG: Initializing dialog dummy encoder
+2019-04-01 16:48:41,301: serban.dialog_encdec:2034: DEBUG: Build dialog dummy encoder
+2019-04-01 16:48:41,313: serban.dialog_encdec:2038: DEBUG: Build decoder (NCE) with direct connection from encoder(s)
+2019-04-01 16:48:41,428: serban.dialog_encdec:2054: DEBUG: Build decoder (EVAL) with direct connection from encoder(s)
+2019-04-01 16:48:42,444: serban.dialog_encdec:1396: DEBUG: Will train all word embeddings
+2019-04-01 16:48:42,724: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:197: DEBUG: Compile trainer
+2019-04-01 16:48:42,724: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:202: DEBUG: Training using exact log-likelihood
+2019-04-01 16:48:42,724: serban.dialog_encdec:1417: DEBUG: Building train function
+/home/cgsdfc/tmp/pycharm_project_381/serban/dialog_encdec.py:1427: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 5 is not part of the computational graph needed to compute the outputs: ran_cost_utterance.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="train_fn")
+/home/cgsdfc/tmp/pycharm_project_381/serban/dialog_encdec.py:1427: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 6 is not part of the computational graph needed to compute the outputs: x_dropmask.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="train_fn")
+2019-04-01 16:49:21,941: serban.dialog_encdec:1471: DEBUG: Building evaluation function
+/home/cgsdfc/tmp/pycharm_project_381/serban/dialog_encdec.py:1478: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 5 is not part of the computational graph needed to compute the outputs: ran_cost_utterance.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  on_unused_input='warn', name="eval_fn")
+/home/cgsdfc/tmp/pycharm_project_381/serban/dialog_encdec.py:1478: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 6 is not part of the computational graph needed to compute the outputs: x_dropmask.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  on_unused_input='warn', name="eval_fn")
+2019-04-01 16:49:25,227: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:217: DEBUG: Load data
+2019-04-01 16:49:25,228: serban.SS_dataset:81: DEBUG: Data len is 2
+Data Iterator Evaluate Mode:  False
+2019-04-01 16:49:25,228: serban.SS_dataset:81: DEBUG: Data len is 2
+Data Iterator Evaluate Mode:  True
+W_emb = 0.1438
+W_infwd = 0.1190
+W_hhfwd = 3.8730
+b_hhfwd = 0.0000
+W_in_rfwd = 0.1297
+W_in_zfwd = 0.1193
+W_hh_rfwd = 3.8730
+W_hh_zfwd = 3.8730
+b_zfwd = 0.0000
+b_rfwd = 0.0000
+W_inbck = 0.1155
+W_hhbck = 3.8730
+b_hhbck = 0.0000
+W_in_rbck = 0.1211
+W_in_zbck = 0.1313
+W_hh_rbck = 3.8730
+W_hh_zbck = 3.8730
+b_zbck = 0.0000
+b_rbck = 0.0000
+Ws_deep_input = 0.1789
+bs_deep_input = 0.0000
+Ws_in = 0.1108
+Ws_hh = 3.1623
+bs_hh = 0.0000
+Ws_in_r = 0.0959
+Ws_in_z = 0.0978
+Ws_hh_r = 3.1623
+Ws_hh_z = 3.1623
+bs_z = 0.0000
+bs_r = 0.0000
+bd_out = 0.0000
+Wd_emb = 0.1601
+Wd_hh = 2.2361
+bd_hh = 0.0000
+Wd_in = 0.0684
+Wd_s_0 = 0.1426
+bd_s_0 = 0.0000
+Wd_in_r = 0.0630
+Wd_in_z = 0.0717
+Wd_hh_r = 2.2361
+Wd_hh_z = 2.2361
+bd_r = 0.0000
+bd_z = 0.0000
+Wd_s_q = 0.1368
+Wd_s_z = 0.1386
+Wd_s_r = 0.1323
+Wd_out = 0.0645
+Wd_e_out = 0.1031
+bd_e_out = 0.0000
+Wd_s_out = 0.2133
+/home/cgsdfc/tmp/pycharm_project_381/serban/dialog_encdec.py:1541: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 3 is not part of the computational graph needed to compute the outputs: beam_x_data.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="next_probs_fn")
+/home/cgsdfc/tmp/pycharm_project_381/serban/dialog_encdec.py:1541: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 4 is not part of the computational graph needed to compute the outputs: beam_ran_cost_utterance.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="next_probs_fn")
+2019-04-01 16:49:26,106: serban.dialog_encdec:1633: DEBUG: Build dialog dummy encoder
+2019-04-01 16:49:26,121: serban.dialog_encdec:1637: DEBUG: Build decoder (NCE) with direct connection from encoder(s)
+/home/cgsdfc/tmp/pycharm_project_381/serban/dialog_encdec.py:1675: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 2 is not part of the computational graph needed to compute the outputs: x_max_length.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="encoder_fn")
+Sampled : ['you ? how <minor_speaker> fine ? doing <off_screen> how much <second_speaker> serious fine thanks <second_speaker> much nothing <minor_speaker> <third_speaker> <voice_over> are <third_speaker> <second_speaker> <minor_speaker> what <voice_over> </s> <voice_over> fine you <first_speaker> doing you what <minor_speaker> </s> nothing serious you <off_screen> <off_screen> you </s>']
+2019-04-01 16:49:29,448: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+/home/cgsdfc/miniconda3/envs/HRED-VHRED-env/lib/python3.7/site-packages/theano/tensor/basic.py:6611: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  result[diagonal_slice] = x
+cost_sum 282.19464
+cost_mean 2.970469906455592
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:04 44639 mb # 0 bs 5 maxl 19 acc_cost = 3.1355 acc_word_perplexity = 23.0000 cur_cost = 3.1355 cur_word_perplexity = 23.0000 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:29,462: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.17694
+cost_mean 2.9702835886101973
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,477: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.1592
+cost_mean 2.970096949527138
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,492: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.14148
+cost_mean 2.969910310444079
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,507: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.12366
+cost_mean 2.9697227076480264
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,521: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.10577
+cost_mean 2.969534462376645
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,534: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.08783
+cost_mean 2.9693455746299344
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,547: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.0698
+cost_mean 2.96915572317023
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,560: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.05167
+cost_mean 2.968964907997533
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,572: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 282.03348
+cost_mean 2.9687734503495067
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,584: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.80774
+cost_mean 2.978077392578125
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:04 44639 mb # 10 bs 5 maxl 20 acc_cost = 3.1346 acc_word_perplexity = 22.9800 cur_cost = 3.1345 cur_word_perplexity = 22.9780 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:29,595: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.665904
+cost_mean 1.5665904045104981
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,601: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.78775
+cost_mean 2.977877502441406
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,615: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.663321
+cost_mean 1.5663320541381835
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,622: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.76535
+cost_mean 2.9776535034179688
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,635: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.660619
+cost_mean 1.5660618782043456
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,642: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.74158
+cost_mean 2.977415771484375
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,656: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.6578455
+cost_mean 1.5657845497131349
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,662: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.7169
+cost_mean 2.9771688842773436
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,675: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.655018
+cost_mean 1.5655017852783204
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,682: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.69156
+cost_mean 2.9769155883789065
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:04 44639 mb # 20 bs 5 maxl 20 acc_cost = 3.1344 acc_word_perplexity = 22.9753 cur_cost = 3.1340 cur_word_perplexity = 22.9659 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:29,694: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.652145
+cost_mean 1.5652145385742187
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,700: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.66562
+cost_mean 2.976656188964844
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,712: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.649227
+cost_mean 1.5649227142333983
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,717: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.63916
+cost_mean 2.9763916015625
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,729: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.646261
+cost_mean 1.564626121520996
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,735: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.61224
+cost_mean 2.9761224365234376
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,747: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.643244
+cost_mean 1.5643243789672852
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,754: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.58478
+cost_mean 2.9758477783203126
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,766: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.640169
+cost_mean 1.5640169143676759
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,775: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.77234
+cost_mean 2.9660246196546054
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:04 44639 mb # 30 bs 5 maxl 19 acc_cost = 3.1339 acc_word_perplexity = 22.9634 cur_cost = 3.1323 cur_word_perplexity = 22.9274 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:29,789: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.76028
+cost_mean 2.9658977307771384
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,802: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.7469
+cost_mean 2.9657567074424342
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,813: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.73227
+cost_mean 2.9656028346011514
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,825: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.7166
+cost_mean 2.965438039679276
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,838: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.69995
+cost_mean 2.965262643914474
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,850: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.68237
+cost_mean 2.965077611019737
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,864: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.66397
+cost_mean 2.964883904708059
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,877: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.64478
+cost_mean 2.9646818462171054
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,889: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.62485
+cost_mean 2.964472078022204
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,902: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.42728
+cost_mean 2.9742727661132813
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:04 44639 mb # 40 bs 5 maxl 20 acc_cost = 3.1327 acc_word_perplexity = 22.9358 cur_cost = 3.1301 cur_word_perplexity = 22.8752 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:29,915: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.6198845
+cost_mean 1.5619884490966798
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,922: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.39917
+cost_mean 2.97399169921875
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,935: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.616152
+cost_mean 1.5616151809692382
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,941: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.36923
+cost_mean 2.9736923217773437
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,955: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.6122875
+cost_mean 1.5612287521362305
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,962: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.3377
+cost_mean 2.9733770751953124
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,973: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.608288
+cost_mean 1.5608287811279298
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,979: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.30466
+cost_mean 2.9730465698242186
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,990: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.604152
+cost_mean 1.5604151725769042
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:29,996: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.2702
+cost_mean 2.9727020263671875
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:04 44639 mb # 50 bs 5 maxl 20 acc_cost = 3.1322 acc_word_perplexity = 22.9249 cur_cost = 3.1295 cur_word_perplexity = 22.8622 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:30,007: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.599871
+cost_mean 1.5599870681762695
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,014: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:447: DEBUG: [VALIDATION START]
+2019-04-01 16:49:30,014: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:456: DEBUG: [VALID] - Got batch 5,20
+/home/cgsdfc/tmp/pycharm_project_381/bin/train.py:475: DeprecationWarning: Non-string object detected for the array ordering. Please pass in 'C', 'F', 'A', or 'K' instead
+  c_list = c_list.reshape((batch['x'].shape[1], max_length - 1), order=(1, 0))
+valid_cost 115.72481536865234
+valid_kl_divergence_cost sample 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,017: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:456: DEBUG: [VALID] - Got batch 5,2
+valid_cost 118.84430980682373
+valid_kl_divergence_cost sample 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,018: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:496: DEBUG: [VALIDATION END]
+Saving the model...
+Model saved, took 0.019213438034057617
+best valid_cost 3.1274818370216773
+** valid cost (NLL) = 3.1275, valid word-perplexity = 22.8165, valid kldiv cost (per word) = 0.00000000, valid mean posterior variance (per word) = 0.00000000, patience = 20
+2019-04-01 16:49:30,038: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.2343
+cost_mean 2.9723431396484377
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,050: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.595437
+cost_mean 1.5595437049865724
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,056: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.19705
+cost_mean 2.971970520019531
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,067: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.590838
+cost_mean 1.559083843231201
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,073: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.15836
+cost_mean 2.9715835571289064
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,084: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.586066
+cost_mean 1.5586066246032715
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,089: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 297.1182
+cost_mean 2.9711819458007813
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,100: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.581104
+cost_mean 1.5581104278564453
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,111: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.25354
+cost_mean 2.9605635793585527
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:04 44639 mb # 60 bs 5 maxl 19 acc_cost = 3.1272 acc_word_perplexity = 22.8094 cur_cost = 3.1272 cur_word_perplexity = 22.8094 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:30,123: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.23386
+cost_mean 2.960356381064967
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,134: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.21204
+cost_mean 2.9601266961348682
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,146: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.18826
+cost_mean 2.9598764519942433
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,158: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.16266
+cost_mean 2.95960693359375
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,169: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.13538
+cost_mean 2.9593197471217105
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,180: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.10648
+cost_mean 2.959015535053454
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,191: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.07605
+cost_mean 2.958695261101974
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,203: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.0441
+cost_mean 2.95835892526727
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,214: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 281.01074
+cost_mean 2.9580078125
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,226: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.86203
+cost_mean 2.9686203002929688
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:05 44639 mb # 70 bs 5 maxl 20 acc_cost = 3.1250 acc_word_perplexity = 22.7594 cur_cost = 3.1238 cur_word_perplexity = 22.7324 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:30,237: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.544976
+cost_mean 1.5544976234436034
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,242: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.81262
+cost_mean 2.968126220703125
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,253: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.537798
+cost_mean 1.5537797927856445
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,259: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.76013
+cost_mean 2.967601318359375
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,270: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.530334
+cost_mean 1.553033447265625
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,276: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.70468
+cost_mean 2.967046813964844
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,287: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.522566
+cost_mean 1.5522565841674805
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,293: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.64627
+cost_mean 2.9664627075195313
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,305: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.51447
+cost_mean 1.5514470100402833
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,311: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.58493
+cost_mean 2.9658493041992187
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:05 44639 mb # 80 bs 5 maxl 20 acc_cost = 3.1243 acc_word_perplexity = 22.7434 cur_cost = 3.1223 cur_word_perplexity = 22.6989 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:30,322: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.5060215
+cost_mean 1.5506021499633789
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,328: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.52054
+cost_mean 2.9652053833007814
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,340: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.497194
+cost_mean 1.5497194290161134
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,346: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.45306
+cost_mean 2.9645306396484377
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,356: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.487961
+cost_mean 1.5487960815429687
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,362: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.38235
+cost_mean 2.9638235473632815
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,373: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.478289
+cost_mean 1.5478288650512695
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,379: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,20
+cost_sum 296.3083
+cost_mean 2.9630828857421876
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,390: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,2
+cost_sum 15.468151
+cost_mean 1.5468151092529296
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,400: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 280.31924
+cost_mean 2.9507288882606906
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+.. 00:00:05 44639 mb # 90 bs 5 maxl 19 acc_cost = 3.1230 acc_word_perplexity = 22.7140 cur_cost = 3.1180 cur_word_perplexity = 22.6016 acc_mean_word_error = 0.0000 acc_mean_kl_divergence_cost = 0.00000000 acc_mean_posterior_variance = 0.00000000
+2019-04-01 16:49:30,412: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 280.2801
+cost_mean 2.950316740337171
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,422: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 280.2369
+cost_mean 2.9498621890419408
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,433: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 280.19
+cost_mean 2.949368446751645
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,447: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 280.1396
+cost_mean 2.9488377621299344
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,460: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 280.08585
+cost_mean 2.948272062602796
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,475: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 280.0289
+cost_mean 2.947672633120888
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,491: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 279.96884
+cost_mean 2.947040437397204
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,506: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 279.90576
+cost_mean 2.946376439144737
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,520: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:264: DEBUG: [TRAIN] - Got batch 5,19
+cost_sum 279.8397
+cost_mean 2.9456809596011513
+kl_divergence_cost_sum 0.0
+kl_divergence_cost_mean 0.0
+posterior_mean_variance 0.0
+2019-04-01 16:49:30,533: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:556: DEBUG: All done, exiting...
+
+Process finished with exit code 0

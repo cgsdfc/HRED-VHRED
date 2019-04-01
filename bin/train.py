@@ -243,7 +243,7 @@ def main(args):
            (time.time() - start_time) / 60. < state['time_stop'] and
            patience >= 0):
 
-        ### Sampling phase
+        # Sampling phase
         if step % 200 == 0:
             # First generate stochastic samples
             for param in model.params:
@@ -252,7 +252,7 @@ def main(args):
             samples, costs = random_sampler.sample([[]], n_samples=1, n_turns=3)
             print("Sampled : {}".format(samples[0]))
 
-        ### Training phase
+        # Training phase
         batch = train_data.next()
 
         # Train finished
@@ -279,8 +279,12 @@ def main(args):
             is_end_of_batch = True
 
         if state['use_nce']:
-            y_neg = rng.choice(size=(10, max_length, x_data.shape[1]), a=model.idim, p=model.noise_probs).astype(
-                'int32')
+            y_neg = rng.choice(
+                size=(10, max_length, x_data.shape[1]),
+                a=model.idim,
+                p=model.noise_probs
+            ).astype('int32')
+
             c, kl_divergence_cost, posterior_mean_variance = train_batch(x_data, x_data_reversed, y_neg, max_length,
                                                                          x_cost_mask, x_reset, ran_cost_utterance,
                                                                          ran_decoder_drop_mask)
@@ -342,7 +346,7 @@ def main(args):
                         batch['x'].shape[1],
                         batch['max_length'],
                         float(train_cost / train_done),
-                        math.exp(float(train_cost / train_done)),
+                        math.exp(train_cost / train_done),
                         current_train_cost,
                         math.exp(current_train_cost),
                         float(train_misclass) / float(train_done),
