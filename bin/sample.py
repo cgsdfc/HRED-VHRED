@@ -1,27 +1,16 @@
 #!/usr/bin/env python
+# !/usr/bin/env python
 
 import argparse
 import logging
 import os
 import pickle
-import time
 
-import search
-from dialog_encoder_decoder import DialogEncoderDecoder
-from state import prototype_state
+import serban.search as search
+from serban.dialog_encoder_decoder import DialogEncoderDecoder
+from serban.state import prototype_state
 
-logger = logging.getLogger(__name__)
-
-
-class Timer(object):
-    def __init__(self):
-        self.total = 0
-
-    def start(self):
-        self.start_time = time.time()
-
-    def finish(self):
-        self.total += time.time() - self.start_time
+logger = logging.getLogger(__file__)
 
 
 def parse_args():
@@ -48,59 +37,72 @@ def parse_args():
 
     parser.add_argument("--verbose", action="store_true", help="Be verbose")
 
-    parser.add_argument("changes", nargs="?", default="", help="Changes to state")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
     state = prototype_state()
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s: %(name)s:%(lineno)d: %(levelname)s: %(message)s")
 
     state_path = args.model_prefix + "_state.pkl"
     model_path = args.model_prefix + "_model.npz"
 
+    logger.info('loading state: %s', state_path)
     with open(state_path, 'rb') as src:
         state.update(pickle.load(src))
 
-    logging.basicConfig(level=getattr(logging, state['level']),
-                        format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
-
+    logger.info('creating model...')
     model = DialogEncoderDecoder(state)
 
-    sampler = search.RandomSampler(model)
+    logger.info('creating sampler...')
     if args.beam_search:
+        logging.info('Using Beam Search')
         sampler = search.BeamSampler(model)
+    else:
+        logging.info('Using Random Search')
+        sampler = search.RandomSampler(model)
 
     if os.path.isfile(model_path):
-        logger.debug("Loading previous model")
+        logger.debug("Loading previous model from %s", model_path)
         model.load(model_path)
     else:
-        raise Exception("Must specify a valid model path")
+        raise ValueError("Must specify a valid model path")
 
-    contexts = [[]]
-    lines = open(args.context, "r").readlines()
+    with open(args.context) as f:
+        lines = f.readlines()
+    logging.info('loaded context, #lines %d', len(lines))
+
     if len(lines):
         contexts = [x.strip() for x in lines]
+    else:
+        contexts = [[]]
 
-    print('Sampling started...')
+    logger.info('Sampling started...')
     context_samples, context_costs = sampler.sample(
         contexts,
         n_samples=args.n_samples,
         n_turns=args.n_turns,
         ignore_unk=args.ignore_unk,
-        verbose=args.verbose
+        verbose=args.verbose,
     )
 
-    print('Sampling finished.')
-    print('Saving to file...')
+    logger.info('Sampling finished.')
+    logger.info('Saving to file %s...', args.output)
 
     # Write to output file
+    parent = os.path.dirname(args.output)
+    if not os.path.isdir(parent):
+        os.makedirs(parent)
+        logger.info('Created directory: %s', parent)
+
     with open(args.output, "w") as output_handle:
         for context_sample in context_samples:
             print('\t'.join(context_sample), file=output_handle)
 
-    print('Saving to file finished.')
-    print('All done!')
+    logger.info('Saving to file finished.')
+    logger.info('All done!')
 
 
 if __name__ == "__main__":

@@ -68,8 +68,8 @@ def save(model, timings, post_fix=''):
     _logger.info("Saving the model...")
 
     save_dir = model.state['save_dir']
-    if not save_dir.is_dir():
-        save_dir.mkdir()
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
     _logger.info('saving to directory: %s', save_dir)
 
     # ignore keyboard interrupt while saving
