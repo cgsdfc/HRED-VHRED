@@ -250,21 +250,25 @@ def main(args):
         if state['utterance_decoder_gating'].upper() == "GRU":
             if (step % 200 == 0) and model.add_latent_gaussian_per_utterance:
                 k_eval = 10
-
                 softmax_costs = numpy.zeros((k_eval), dtype='float32')
                 var_costs = numpy.zeros((k_eval), dtype='float32')
-                gradients_wrt_softmax = numpy.zeros((k_eval, model.qdim_decoder, model.qdim_decoder), dtype='float32')
+                gradients_wrt_softmax = numpy.zeros(
+                    (k_eval, model.qdim_decoder, model.qdim_decoder),
+                    dtype='float32'
+                )
+
                 for k in range(0, k_eval):
                     batch = add_random_variables_to_batch(model.state, model.rng, batch, None, False)
                     ran_cost_utterance = batch['ran_var_constutterance']
                     ran_decoder_drop_mask = batch['ran_decoder_drop_mask']
-                    softmax_cost, var_cost, grads_wrt_softmax, grads_wrt_kl_divergence_cost = eval_grads(x_data,
-                                                                                                         x_data_reversed,
-                                                                                                         max_length,
-                                                                                                         x_cost_mask,
-                                                                                                         x_reset,
-                                                                                                         ran_cost_utterance,
-                                                                                                         ran_decoder_drop_mask)
+                    softmax_cost, var_cost, \
+                    grads_wrt_softmax, grads_wrt_kl_divergence_cost = eval_grads(x_data,
+                                                                                 x_data_reversed,
+                                                                                 max_length,
+                                                                                 x_cost_mask,
+                                                                                 x_reset,
+                                                                                 ran_cost_utterance,
+                                                                                 ran_decoder_drop_mask)
                     softmax_costs[k] = softmax_cost
                     var_costs[k] = var_cost
                     gradients_wrt_softmax[k, :, :] = grads_wrt_softmax
@@ -387,13 +391,13 @@ def print_inference(gradients_wrt_softmax, model, softmax_costs, state, var_cost
     _logger.info('std var_costs: %f', numpy.std(var_costs))
 
     _logger.info(
-        'mean gradients_wrt_softmax: %f',
+        'mean gradients_wrt_softmax: %r, %r',
         numpy.mean(numpy.abs(numpy.mean(gradients_wrt_softmax, axis=0))),
         numpy.mean(gradients_wrt_softmax, axis=0)
     )
 
     _logger.info(
-        'std gradients_wrt_softmax: %f',
+        'std gradients_wrt_softmax: %r, %r',
         numpy.mean(numpy.std(gradients_wrt_softmax, axis=0)),
         numpy.std(gradients_wrt_softmax, axis=0)
     )
@@ -410,7 +414,7 @@ def print_inference(gradients_wrt_softmax, model, softmax_costs, state, var_cost
 
     Wd_s_q = model.utterance_decoder.Wd_s_q.get_value()
 
-    _logger.info('Wd_s_q all: %f', numpy.sum(numpy.abs(Wd_s_q)), numpy.mean(numpy.abs(Wd_s_q)))
+    _logger.info('Wd_s_q all: %f, %f', numpy.sum(numpy.abs(Wd_s_q)), numpy.mean(numpy.abs(Wd_s_q)))
 
     _logger.info(
         'Wd_s_q latent: %f, %f',

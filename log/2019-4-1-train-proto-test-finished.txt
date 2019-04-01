@@ -1,4 +1,4 @@
-ssh://cgsdfc@192.168.1.175:22/home/cgsdfc/miniconda3/envs/HRED-VHRED-env/bin/python -u /home/cgsdfc/tmp/pycharm_project_381/bin/train.py prototype_test
+ssh://cgsdfc@192.168.1.175:22/home/cgsdfc/miniconda3/envs/HRED-VHRED-env/bin/python -u /home/cgsdfc/tmp/pycharm_project_381/bin/train.py prototype_test_HRED
 2019-04-01 16:48:41,003: /home/cgsdfc/tmp/pycharm_project_381/bin/train.py:155: DEBUG: State:
 {'add_latent_gaussian_per_utterance': False,
  'bidirectional_utterance_encoder': True,
