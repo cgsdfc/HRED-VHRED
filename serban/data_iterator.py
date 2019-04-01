@@ -4,7 +4,7 @@ import math
 import logging
 import numpy as np
 
-from SS_dataset import SSIterator
+from serban.SS_dataset import SSIterator
 
 logger = logging.getLogger(__name__)
 

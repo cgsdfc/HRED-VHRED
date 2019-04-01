@@ -16,11 +16,11 @@ import pickle
 import numpy
 import theano
 
-import state as prototype_states
-import search
-from data_iterator import get_train_iterator, add_random_variables_to_batch
-from dialog_encdec import DialogEncoderDecoder
-from utils import ConvertTimedelta
+import serban.state as prototype_states
+import serban.search as search
+from serban.data_iterator import get_train_iterator, add_random_variables_to_batch
+from serban.dialog_encdec import DialogEncoderDecoder
+from serban.utils import ConvertTimedelta
 
 
 class Unbuffered:
@@ -38,10 +38,10 @@ class Unbuffered:
 sys.stdout = Unbuffered(sys.stdout)
 logger = logging.getLogger(__name__)
 
-### Unique RUN_ID for this execution
+# Unique RUN_ID for this execution
 RUN_ID = str(time.time())
 
-### Additional measures can be set here
+# Additional measures can be set here
 measures = ["train_cost", "train_misclass", "train_kl_divergence_cost", "train_posterior_mean_variance",
             "valid_cost", "valid_misclass", "valid_kl_divergence_cost", "valid_posterior_mean_variance", "valid_emi"]
 
@@ -565,7 +565,11 @@ def parse_args():
                              " option is meant to be used for training models on clusters with hard wall-times. This "
                              "option is incompatible with the \"resume\" and \"save_every_valid_iteration\" options.")
 
-    parser.add_argument("--prototype", type=str, help="Prototype to use (must be specified)", default='prototype_state')
+    # the old default, prototype_state, does not provide a dictionary and this trigger mysterious errors when
+    # a prototype is not given. Thus I make it a positional argument -- required.
+    # In fact, they said in the help -- (must be specified) ;-).
+    # I just express their meaning better.
+    parser.add_argument("prototype", type=str, help="Prototype to use (must be specified)")
 
     parser.add_argument("--reinitialize-latent-variable-parameters", action='store_true',
                         help="Can be used when resuming a model."

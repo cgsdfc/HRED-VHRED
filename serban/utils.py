@@ -3,7 +3,7 @@ import theano
 import theano.tensor as T
 from collections import OrderedDict
 
-import adam
+import serban.adam as adam
 
 PRINT_VARS = True
 

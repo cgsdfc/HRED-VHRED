@@ -8,8 +8,8 @@ import theano
 
 from collections import OrderedDict
 
-from model import Model
-from utils import NormalInit, OrthogonalInit, Adagrad, Adadelta, RMSProp
+from serban.model import Model
+from serban.utils import NormalInit, OrthogonalInit, Adagrad, Adadelta, RMSProp, Maxout, SoftMax, GrabProbs, Adam
 
 import logging
 import pickle
@@ -294,7 +294,7 @@ class DCGMEncoder(EncoderDecoderBase):
             ones_vector = T.ones_like(xmask[0, :]).dimshuffle('x', 0)
             rolled_xmask = T.concatenate([ones_vector, xmask], axis=0)
         else:
-            ones_scalar = theano.shared(value=numpy.ones(1, dtype='float32'), name='ones_scalar')
+            ones_scalar = theano.shared(value=np.ones(1, dtype='float32'), name='ones_scalar')
             rolled_xmask = T.concatenate([ones_scalar, xmask])
 
         f_enc = self.mean_step
@@ -619,7 +619,7 @@ class UtteranceDecoder(EncoderDecoderBase):
         # We only include the initial hidden state if the utterance decoder is NOT reset 
         # and if its NOT a collapsed model (i.e. collapsed to standard RNN). 
         # In the collapsed model, we always initialize hidden state to zero.
-        if (not self.collaps_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
+        if (not self.collapse_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
             self.Wd_s_0 = add_to_params(self.params, theano.shared(
                 value=NormalInit(self.rng, self.input_dim, self.complete_hidden_state_size), name='Wd_s_0'))
             self.bd_s_0 = add_to_params(self.params, theano.shared(
@@ -844,7 +844,7 @@ class UtteranceDecoder(EncoderDecoderBase):
                       prev_state=None, step_num=None):
 
         # If model collapses to standard RNN reset all input to decoder
-        if self.collaps_to_standard_rnn:
+        if self.collapse_to_standard_rnn:
             decoder_inp = decoder_inp * 0
 
         # Check parameter consistency
@@ -961,7 +961,7 @@ class UtteranceDecoder(EncoderDecoderBase):
 
         # If model collapses to standard RNN, or the 'reset_utterance_decoder_at_end_of_utterance' flag is off,
         # then never reset decoder. Otherwise, reset the decoder at every utterance turn.
-        if (not self.collaps_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
+        if (not self.collapse_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
             hd_tm1 = m_t * hd_tm1 + (1 - m_t) * T.tanh(T.dot(decoder_inp_t, self.Wd_s_0) + self.bd_s_0)
 
         # Unlike the GRU gating function, the LSTM gating function needs to keep track of two vectors:
@@ -1043,7 +1043,7 @@ class UtteranceDecoder(EncoderDecoderBase):
 
         # If model collapses to standard RNN, or the 'reset_utterance_decoder_at_end_of_utterance' flag is off,
         # then never reset decoder. Otherwise, reset the decoder at every utterance turn.
-        if (not self.collaps_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
+        if (not self.collapse_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
             hd_tm1 = m_t * hd_tm1 + (1 - m_t) * T.tanh(T.dot(decoder_inp_t, self.Wd_s_0) + self.bd_s_0)
 
         # In the 'selective' decoder bias type each hidden state of the decoder
@@ -1096,7 +1096,7 @@ class UtteranceDecoder(EncoderDecoderBase):
 
         # If model collapses to standard RNN, or the 'reset_utterance_decoder_at_end_of_utterance' flag is off,
         # then never reset decoder. Otherwise, reset the decoder at every utterance turn.
-        if (not self.collaps_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
+        if (not self.collapse_to_standard_rnn) and self.reset_utterance_decoder_at_end_of_utterance:
             # We already assume that xd are zeroed out
             hd_tm1 = m_t * hd_tm1 + (1 - m_t) * T.tanh(T.dot(decoder_inp_t, self.Wd_s_0) + self.bd_s_0)
 
@@ -1753,7 +1753,8 @@ class DialogEncoderDecoder(Model):
         self.rng = np.random.RandomState(state['seed'])
 
         # Load dictionary
-        raw_dict = pickle.load(open(self.dictionary, 'r'))
+        with open(self.dictionary, 'rb') as f:
+            raw_dict = pickle.load(f)
 
         # Probabilities for each term in the corpus used for noise contrastive estimation (NCE)
         self.noise_probs = [x[2] for x in sorted(raw_dict, key=operator.itemgetter(1))]
@@ -1810,7 +1811,8 @@ class DialogEncoderDecoder(Model):
         if self.initialize_from_pretrained_word_embeddings:
             # Load pretrained word embeddings from pickled file
             logger.debug("Loading pretrained word embeddings")
-            pretrained_embeddings = pickle.load(open(self.pretrained_word_embeddings_file, 'r'))
+            with open(self.pretrained_word_embeddings_file, 'rb') as f:
+                pretrained_embeddings = pickle.load(f)
 
             # Check all dimensions match from the pretrained embeddings
             assert (self.idim == pretrained_embeddings[0].shape[0])
@@ -2115,7 +2117,7 @@ class DialogEncoderDecoder(Model):
             self.evaluation_cost = self.training_cost
 
         # Init params
-        if self.collaps_to_standard_rnn:
+        if self.collapse_to_standard_rnn:
             self.params = self.global_params + self.utterance_decoder.params
             assert len(set(self.params)) == (len(self.global_params) + len(self.utterance_decoder.params))
         else:

@@ -101,7 +101,7 @@ def main():
     state_path = args.model_prefix + "_state.pkl"
     model_path = args.model_prefix + "_model.npz"
 
-    with open(state_path) as src:
+    with open(state_path, 'rb') as src:
         state.update(pickle.load(src))
 
     logging.basicConfig(level=getattr(logging, state['level']),
@@ -118,7 +118,7 @@ def main():
         raise Exception("Must specify a valid model path")
 
     contexts = [[]]
-    lines = open(args.dialogues, "r").readlines()
+    lines = open(args.dialogues, "rb").readlines()
     if len(lines):
         contexts = [x.strip() for x in lines]
 
@@ -163,7 +163,8 @@ def main():
             dialogue_encodings.append(encodings[i])
 
     # Save encodings to disc
-    pickle.dump(dialogue_encodings, open(args.output + '.pkl', 'w'))
+    with open(args.output + '.pkl', 'wb') as f:
+        pickle.dump(dialogue_encodings, f)
 
 
 if __name__ == "__main__":
