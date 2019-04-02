@@ -13,15 +13,16 @@ import pprint
 import signal
 import sys
 import time
-from os import listdir
-from os.path import isfile, join
-
 import gc
 import numpy
 import theano
 
+from os import listdir
+from os.path import isfile, join
+
 import serban.search as search
 import serban.state as prototype_states
+
 from serban.data_iterator import get_train_iterator, add_random_variables_to_batch
 from serban.dialog_encoder_decoder import DialogEncoderDecoder
 from serban.utils import ConvertTimedelta

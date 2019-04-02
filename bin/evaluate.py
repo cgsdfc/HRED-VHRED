@@ -22,11 +22,11 @@ import logging
 import math
 import os
 import pickle
-
 import numpy
-from data_iterator import get_test_iterator
-from dialog_encoder_decoder import DialogEncoderDecoder
-from state import prototype_state
+
+from serban.data_iterator import get_test_iterator
+from serban.dialog_encoder_decoder import DialogEncoderDecoder
+from serban.state import prototype_state
 
 logger = logging.getLogger(__name__)
 

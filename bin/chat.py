@@ -14,7 +14,6 @@ import itertools
 import logging
 import os
 import pickle
-import time
 import theano
 
 from serban import search

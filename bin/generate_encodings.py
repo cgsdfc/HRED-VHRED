@@ -30,10 +30,10 @@ import argparse
 import logging
 import os
 import pickle
-
 import numpy
-from dialog_encoder_decoder import DialogEncoderDecoder
-from state import prototype_state
+
+from serban.dialog_encoder_decoder import DialogEncoderDecoder
+from serban.state import prototype_state
 
 logger = logging.getLogger(__name__)
 
