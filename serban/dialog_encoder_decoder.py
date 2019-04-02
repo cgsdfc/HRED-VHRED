@@ -36,7 +36,7 @@ def add_to_params(params, new_param):
     return new_param
 
 
-class EncoderDecoderBase:
+class EncoderDecoderBase(object):
     def __init__(self, state, rng, parent):
         self.rng = rng
         self.parent = parent
@@ -1680,7 +1680,7 @@ class DialogEncoderDecoder(Model):
         return self.encoder_fn
 
     def __init__(self, state):
-        super().__init__()
+        super(DialogEncoderDecoder, self).__init__()
 
         # Make sure eos_sym is never zero, otherwise generate_encodings script would fail
         assert state['eos_sym'] > 0
