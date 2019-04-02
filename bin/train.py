@@ -1,28 +1,27 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
 from __future__ import division
-from __future__ import unicode_literals
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import argparse
+import logging
 import math
 import os
-import os.path
-import pathlib
+import pickle
 import pprint
 import signal
 import sys
 import time
 from os import listdir
 from os.path import isfile, join
-import logging
+
 import gc
-import pickle
 import numpy
 import theano
 
-import serban.state as prototype_states
 import serban.search as search
+import serban.state as prototype_states
 from serban.data_iterator import get_train_iterator, add_random_variables_to_batch
 from serban.dialog_encoder_decoder import DialogEncoderDecoder
 from serban.utils import ConvertTimedelta
@@ -79,18 +78,18 @@ def save(model, timings, post_fix=''):
     s = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     # This is the model weights.
-    filename = model.state['save_dir'].joinpath(model_name + 'model.npz')
+    filename = os.path.join(model.state['save_dir'], (model_name + 'model.npz'))
     model.save(filename)
     _logger.info('saved model weights: %s', filename)
 
     # This is the model hparams.
-    filename = model.state['save_dir'].joinpath(model_name + 'state.pkl')
+    filename = os.path.join(model.state['save_dir'], (model_name + 'state.pkl'))
     with open(filename, 'wb') as f:
         pickle.dump(model.state, f)
     _logger.info('saved model hyperparameters: %s', filename)
 
     # This is the model metrics.
-    filename = model.state['save_dir'].joinpath(model_name + 'timing.npz')
+    filename = os.path.join(model.state['save_dir'], (model_name + 'timing.npz'))
     numpy.savez(filename, **timings)
     _logger.info('saved model metrics: %s', filename)
 
