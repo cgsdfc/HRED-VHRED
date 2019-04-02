@@ -17,6 +17,11 @@ NOTE: It's better to use the original dialogues in plain text for building the c
 
 @author Iulian Vlad Serban
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import argparse
 import pickle
 

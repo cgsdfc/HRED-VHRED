@@ -1,15 +1,20 @@
 """
 Computes BLEU-N, Jaccard, Recall, MRR, TF-IDF Cosine Similarity etc.
 """
-__docformat__ = 'restructedtext en'
-__authors__ = "Alessandro Sordoni, Iulian Vlad Serban"
-__contact__ = "Alessandro Sordoni <sordonia@iro.umontreal>"
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import math
 import operator
+import numpy
+
 from collections import Counter
 
-import numpy
+__docformat__ = 'restructedtext en'
+__authors__ = "Alessandro Sordoni, Iulian Vlad Serban"
+__contact__ = "Alessandro Sordoni <sordonia@iro.umontreal>"
 
 
 def get_ref_length(ref_lens, candidate_len, method='closest'):

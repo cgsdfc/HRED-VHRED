@@ -6,6 +6,9 @@ using that input dictionary.
 @author Alessandro Sordoni, Iulian Vlad Serban
 """
 from __future__ import division
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
 
 import argparse
 import collections

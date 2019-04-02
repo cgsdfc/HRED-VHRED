@@ -1,9 +1,14 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import numpy
 import theano
 import theano.tensor as T
-from collections import OrderedDict
 
-import serban.adam as adam
+from collections import OrderedDict
+from serban import adam
 
 PRINT_VARS = True
 

@@ -2,13 +2,16 @@
 """
 This script computes dialogue embeddings for dialogues found in a text file.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import argparse
 import logging
 import math
 import os
 import pickle
-import time
 import numpy
 
 from serban.dialog_encoder_decoder import DialogEncoderDecoder

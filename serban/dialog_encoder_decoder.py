@@ -3,21 +3,24 @@ Dialog hierarchical encoder-decoder code.
 The code is inspired from nmt encode code in groundhog
 but we do not rely on groundhog infrastructure.
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import theano
-
-from collections import OrderedDict
-
-from serban.model import Model
-from serban.utils import NormalInit, OrthogonalInit, Adagrad, Adadelta, RMSProp, Maxout, SoftMax, GrabProbs, Adam
-
 import logging
 import pickle
 import operator
 import numpy as np
-import theano.tensor as T
 
+from collections import OrderedDict
+import theano.tensor as T
 from theano.sandbox.rng_mrg import MRG_RandomStreams
+
+from serban.model import Model
+from serban.utils import (NormalInit, OrthogonalInit, Adagrad, Adadelta,
+                          RMSProp, Maxout, SoftMax, GrabProbs, Adam)
 
 __docformat__ = 'restructedtext en'
 __authors__ = "Iulian Vlad Serban"

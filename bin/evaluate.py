@@ -12,6 +12,10 @@ Run example:
 THEANO_FLAGS=mode=FAST_RUN,device=gpu,floatX=float32,allow_gc=True,scan.allow_gc=False,nvcc.flags=-use_fast_math python evaluate.py Output/1432724394.9_MovieScriptModel &> Test_Eval_Output.txt
 
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import argparse
 import logging
