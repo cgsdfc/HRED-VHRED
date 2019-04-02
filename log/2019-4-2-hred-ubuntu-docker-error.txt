@@ -1,0 +1,470 @@
+ssh://cgsdfc@192.168.1.175:22:docker run --runtime nvidia -v /home/cgsdfc/deployment/HRED-VHRED:/root/HRED-VHRED -v /home/cgsdfc/UbuntuDialogueCorpus:/home/cgsdfc/UbuntuDialogueCorpus -w /root/HRED-VHRED -e PYTHONPATH=/root/HRED-VHRED ufoym/deepo:theano-py36-cu90 python bin/train.py prototype_ubuntu_HRED
+/usr/local/lib/python3.6/dist-packages/theano/gpuarray/dnn.py:184: UserWarning: Your cuDNN version is more recent than Theano. If you encounter problems, try updating Theano or downgrading cuDNN to a version >= v5 and <= v7.
+  warnings.warn("Your cuDNN version is more recent than "
+Using cuDNN version 7402 on context None
+Mapped name None to device cuda0: GeForce GTX TITAN X (0000:02:00.0)
+2019-04-02 06:08:04,244: bin/train.py:116: INFO: loading prototype prototype_ubuntu_HRED
+2019-04-02 06:08:04,246: bin/train.py:569: DEBUG: State:
+{'add_latent_gaussian_per_utterance': False,
+ 'bidirectional_utterance_encoder': False,
+ 'bs': 80,
+ 'collapse_to_standard_rnn': False,
+ 'condition_decoder_only_on_latent_variable': False,
+ 'condition_latent_variable_on_dcgm_encoder': False,
+ 'condition_latent_variable_on_dialogue_encoder': False,
+ 'cost_threshold': 1.003,
+ 'cutoff': 1.0,
+ 'decoder_bias_type': 'all',
+ 'decoder_drop_previous_input_tokens': False,
+ 'decoder_drop_previous_input_tokens_rate': 0.75,
+ 'deep_dialogue_input': True,
+ 'deep_direct_connection': False,
+ 'deep_out': True,
+ 'dialogue_encoder_gating': 'GRU',
+ 'dialogue_rec_activation': 'lambda x: T.tanh(x)',
+ 'dictionary': '/home/cgsdfc/UbuntuDialogueCorpus/Dataset.dict.pkl',
+ 'direct_connection_between_encoders_and_decoder': False,
+ 'end_sym_utterance': '__eot__',
+ 'eod_sym': -1,
+ 'eos_sym': 1,
+ 'first_speaker_sym': -1,
+ 'fix_encoder_parameters': False,
+ 'fix_pretrained_word_embeddings': False,
+ 'initialize_from_pretrained_word_embeddings': False,
+ 'kl_divergence_annealing_rate': 1.6666666666666667e-05,
+ 'latent_gaussian_linear_dynamics': False,
+ 'latent_gaussian_per_utterance_dim': 10,
+ 'level': 'DEBUG',
+ 'loop_iters': 3000000,
+ 'lr': 0.0002,
+ 'max_grad_steps': 80,
+ 'maxout_out': False,
+ 'minerr': -1,
+ 'minor_speaker_sym': -1,
+ 'off_screen_sym': -1,
+ 'oov': '<unk>',
+ 'patience': 20,
+ 'pause_sym': -1,
+ 'prefix': 'UbuntuModel_',
+ 'pretrained_word_embeddings_file': '',
+ 'qdim_decoder': 500,
+ 'qdim_encoder': 500,
+ 'rankdim': 300,
+ 'reset_hidden_states_between_subsequences': False,
+ 'reset_utterance_decoder_at_end_of_utterance': True,
+ 'reset_utterance_encoder_at_end_of_utterance': True,
+ 'save_dir': 'HRED',
+ 'scale_latent_variable_variances': 10,
+ 'sdim': 1000,
+ 'second_speaker_sym': -1,
+ 'seed': 1234,
+ 'sent_rec_activation': 'lambda x: T.tanh(x)',
+ 'sort_k_batches': 20,
+ 'test_dialogues': '/home/cgsdfc/UbuntuDialogueCorpus/Test.dialogues.pkl',
+ 'third_speaker_sym': -1,
+ 'time_stop': 44640,
+ 'train_dialogues': '/home/cgsdfc/UbuntuDialogueCorpus/Training.dialogues.pkl',
+ 'train_freq': 10,
+ 'train_latent_gaussians_with_kl_divergence_annealing': False,
+ 'unk_sym': 0,
+ 'updater': 'adam',
+ 'use_nce': False,
+ 'utterance_decoder_gating': 'LSTM',
+ 'utterance_encoder_gating': 'GRU',
+ 'valid_dialogues': '/home/cgsdfc/UbuntuDialogueCorpus/Validation.dialogues.pkl',
+ 'valid_freq': 5000,
+ 'voice_over_sym': -1}
+2019-04-02 06:08:04,246: bin/train.py:570: DEBUG: Metrics:
+{'train_cost': [],
+ 'train_kl_divergence_cost': [],
+ 'train_misclass': [],
+ 'train_posterior_mean_variance': [],
+ 'valid_cost': [],
+ 'valid_emi': [],
+ 'valid_kl_divergence_cost': [],
+ 'valid_misclass': [],
+ 'valid_posterior_mean_variance': []}
+2019-04-02 06:08:04,246: bin/train.py:574: INFO: Creating model...
+2019-04-02 06:08:04,330: serban.dialog_encoder_decoder:1785: DEBUG: idim: 20000
+2019-04-02 06:08:04,330: serban.dialog_encoder_decoder:1787: DEBUG: Initializing Theano variables
+2019-04-02 06:08:04,337: serban.dialog_encoder_decoder:1811: DEBUG: Decoder bias type all
+2019-04-02 06:08:05,842: serban.dialog_encoder_decoder:1893: DEBUG: Initializing utterance encoder
+2019-04-02 06:08:06,407: serban.dialog_encoder_decoder:1896: DEBUG: Build utterance encoder
+2019-04-02 06:08:06,469: serban.dialog_encoder_decoder:1901: DEBUG: Initializing dialog encoder
+2019-04-02 06:08:08,558: serban.dialog_encoder_decoder:1904: DEBUG: Build dialog encoder
+2019-04-02 06:08:08,660: serban.dialog_encoder_decoder:2027: DEBUG: Initializing decoder
+2019-04-02 06:08:11,346: serban.dialog_encoder_decoder:2071: DEBUG: Build decoder (NCE)
+2019-04-02 06:08:11,440: serban.dialog_encoder_decoder:2079: DEBUG: Build decoder (EVAL)
+2019-04-02 06:08:12,164: serban.dialog_encoder_decoder:1399: DEBUG: Will train all word embeddings
+2019-04-02 06:08:12,502: bin/train.py:124: DEBUG: Compile trainer
+2019-04-02 06:08:12,502: bin/train.py:129: DEBUG: Training using exact log-likelihood
+2019-04-02 06:08:12,502: serban.dialog_encoder_decoder:1420: DEBUG: Building train function
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1430: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 1 is not part of the computational graph needed to compute the outputs: x_data_reversed.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="train_fn")
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1430: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 5 is not part of the computational graph needed to compute the outputs: ran_cost_utterance.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="train_fn")
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1430: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 6 is not part of the computational graph needed to compute the outputs: x_dropmask.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="train_fn")
+ERROR (theano.gof.opt): SeqOptimizer apply <theano.scan_module.scan_opt.PushOutScanOutput object at 0x7fb251ae9240>
+2019-04-02 06:08:13,636: theano.gof.opt:198: ERROR: SeqOptimizer apply <theano.scan_module.scan_opt.PushOutScanOutput object at 0x7fb251ae9240>
+ERROR (theano.gof.opt): Traceback:
+2019-04-02 06:08:13,636: theano.gof.opt:199: ERROR: Traceback:
+ERROR (theano.gof.opt): Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 251, in apply
+    sub_prof = optimizer.optimize(fgraph)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 97, in optimize
+    ret = self.apply(fgraph, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 685, in apply
+    node = self.process_node(fgraph, node)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 745, in process_node
+    node, args)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 854, in push_out_inner_vars
+    add_as_nitsots)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 906, in add_nitsot_outputs
+    reason='scanOp_pushout_output')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 569, in replace_all_validate_remove
+    chk = fgraph.replace_all_validate(replacements, reason)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 543, in replace_all_validate
+    fgraph.validate()
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 434, in validate_
+    ret = fgraph.execute_callbacks('validate')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/fg.py", line 594, in execute_callbacks
+    fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 600, in validate
+    raise theano.gof.InconsistencyError("Trying to reintroduce a removed node")
+theano.gof.fg.InconsistencyError: Trying to reintroduce a removed node
+
+2019-04-02 06:08:13,637: theano.gof.opt:200: ERROR: Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 251, in apply
+    sub_prof = optimizer.optimize(fgraph)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 97, in optimize
+    ret = self.apply(fgraph, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 685, in apply
+    node = self.process_node(fgraph, node)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 745, in process_node
+    node, args)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 854, in push_out_inner_vars
+    add_as_nitsots)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 906, in add_nitsot_outputs
+    reason='scanOp_pushout_output')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 569, in replace_all_validate_remove
+    chk = fgraph.replace_all_validate(replacements, reason)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 543, in replace_all_validate
+    fgraph.validate()
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 434, in validate_
+    ret = fgraph.execute_callbacks('validate')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/fg.py", line 594, in execute_callbacks
+    fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 600, in validate
+    raise theano.gof.InconsistencyError("Trying to reintroduce a removed node")
+theano.gof.fg.InconsistencyError: Trying to reintroduce a removed node
+
+ERROR (theano.gof.opt): SeqOptimizer apply <theano.scan_module.scan_opt.PushOutScanOutput object at 0x7fb251ae9240>
+2019-04-02 06:08:14,208: theano.gof.opt:198: ERROR: SeqOptimizer apply <theano.scan_module.scan_opt.PushOutScanOutput object at 0x7fb251ae9240>
+ERROR (theano.gof.opt): Traceback:
+2019-04-02 06:08:14,208: theano.gof.opt:199: ERROR: Traceback:
+ERROR (theano.gof.opt): Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 251, in apply
+    sub_prof = optimizer.optimize(fgraph)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 97, in optimize
+    ret = self.apply(fgraph, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 685, in apply
+    node = self.process_node(fgraph, node)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 745, in process_node
+    node, args)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 854, in push_out_inner_vars
+    add_as_nitsots)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 906, in add_nitsot_outputs
+    reason='scanOp_pushout_output')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 569, in replace_all_validate_remove
+    chk = fgraph.replace_all_validate(replacements, reason)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 543, in replace_all_validate
+    fgraph.validate()
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 434, in validate_
+    ret = fgraph.execute_callbacks('validate')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/fg.py", line 594, in execute_callbacks
+    fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 600, in validate
+    raise theano.gof.InconsistencyError("Trying to reintroduce a removed node")
+theano.gof.fg.InconsistencyError: Trying to reintroduce a removed node
+
+2019-04-02 06:08:14,208: theano.gof.opt:200: ERROR: Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 251, in apply
+    sub_prof = optimizer.optimize(fgraph)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 97, in optimize
+    ret = self.apply(fgraph, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 685, in apply
+    node = self.process_node(fgraph, node)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 745, in process_node
+    node, args)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 854, in push_out_inner_vars
+    add_as_nitsots)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 906, in add_nitsot_outputs
+    reason='scanOp_pushout_output')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 569, in replace_all_validate_remove
+    chk = fgraph.replace_all_validate(replacements, reason)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 543, in replace_all_validate
+    fgraph.validate()
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 434, in validate_
+    ret = fgraph.execute_callbacks('validate')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/fg.py", line 594, in execute_callbacks
+    fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 600, in validate
+    raise theano.gof.InconsistencyError("Trying to reintroduce a removed node")
+theano.gof.fg.InconsistencyError: Trying to reintroduce a removed node
+
+ERROR (theano.gof.opt): SeqOptimizer apply <theano.scan_module.scan_opt.PushOutScanOutput object at 0x7fb251ae9240>
+2019-04-02 06:08:14,502: theano.gof.opt:198: ERROR: SeqOptimizer apply <theano.scan_module.scan_opt.PushOutScanOutput object at 0x7fb251ae9240>
+ERROR (theano.gof.opt): Traceback:
+2019-04-02 06:08:14,502: theano.gof.opt:199: ERROR: Traceback:
+ERROR (theano.gof.opt): Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 251, in apply
+    sub_prof = optimizer.optimize(fgraph)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 97, in optimize
+    ret = self.apply(fgraph, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 685, in apply
+    node = self.process_node(fgraph, node)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 745, in process_node
+    node, args)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 854, in push_out_inner_vars
+    add_as_nitsots)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 906, in add_nitsot_outputs
+    reason='scanOp_pushout_output')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 569, in replace_all_validate_remove
+    chk = fgraph.replace_all_validate(replacements, reason)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 543, in replace_all_validate
+    fgraph.validate()
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 434, in validate_
+    ret = fgraph.execute_callbacks('validate')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/fg.py", line 594, in execute_callbacks
+    fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 600, in validate
+    raise theano.gof.InconsistencyError("Trying to reintroduce a removed node")
+theano.gof.fg.InconsistencyError: Trying to reintroduce a removed node
+
+2019-04-02 06:08:14,503: theano.gof.opt:200: ERROR: Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 251, in apply
+    sub_prof = optimizer.optimize(fgraph)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/opt.py", line 97, in optimize
+    ret = self.apply(fgraph, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 685, in apply
+    node = self.process_node(fgraph, node)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 745, in process_node
+    node, args)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 854, in push_out_inner_vars
+    add_as_nitsots)
+  File "/usr/local/lib/python3.6/dist-packages/theano/scan_module/scan_opt.py", line 906, in add_nitsot_outputs
+    reason='scanOp_pushout_output')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 569, in replace_all_validate_remove
+    chk = fgraph.replace_all_validate(replacements, reason)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 543, in replace_all_validate
+    fgraph.validate()
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 434, in validate_
+    ret = fgraph.execute_callbacks('validate')
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/fg.py", line 594, in execute_callbacks
+    fn(self, *args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/toolbox.py", line 600, in validate
+    raise theano.gof.InconsistencyError("Trying to reintroduce a removed node")
+theano.gof.fg.InconsistencyError: Trying to reintroduce a removed node
+
+2019-04-02 06:11:38,409: serban.dialog_encoder_decoder:1474: DEBUG: Building evaluation function
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1481: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 1 is not part of the computational graph needed to compute the outputs: x_data_reversed.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  on_unused_input='warn', name="eval_fn")
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1481: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 5 is not part of the computational graph needed to compute the outputs: ran_cost_utterance.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  on_unused_input='warn', name="eval_fn")
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1481: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 6 is not part of the computational graph needed to compute the outputs: x_dropmask.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  on_unused_input='warn', name="eval_fn")
+2019-04-02 06:12:11,523: bin/train.py:142: DEBUG: Loading data
+Data Iterator Evaluate Mode:  False
+2019-04-02 06:12:14,850: serban.SS_dataset:85: DEBUG: Data len is 448833
+Data Iterator Evaluate Mode:  True
+2019-04-02 06:12:14,973: serban.SS_dataset:85: DEBUG: Data len is 19584
+2019-04-02 06:12:15,090: bin/train.py:170: INFO: W_emb = 24.5162
+2019-04-02 06:12:15,106: bin/train.py:170: INFO: W_infwd = 3.8771
+2019-04-02 06:12:15,123: bin/train.py:170: INFO: W_hhfwd = 22.3607
+2019-04-02 06:12:15,133: bin/train.py:170: INFO: b_hhfwd = 0.0000
+2019-04-02 06:12:15,155: bin/train.py:170: INFO: W_in_rfwd = 3.8781
+2019-04-02 06:12:15,176: bin/train.py:170: INFO: W_in_zfwd = 3.8854
+2019-04-02 06:12:15,197: bin/train.py:170: INFO: W_hh_rfwd = 22.3607
+2019-04-02 06:12:15,211: bin/train.py:170: INFO: W_hh_zfwd = 22.3607
+2019-04-02 06:12:15,211: bin/train.py:170: INFO: b_zfwd = 0.0000
+2019-04-02 06:12:15,211: bin/train.py:170: INFO: b_rfwd = 0.0000
+2019-04-02 06:12:15,213: bin/train.py:170: INFO: Ws_deep_input = 7.0697
+2019-04-02 06:12:15,213: bin/train.py:170: INFO: bs_deep_input = 0.0000
+2019-04-02 06:12:15,215: bin/train.py:170: INFO: Ws_in = 9.9880
+2019-04-02 06:12:15,218: bin/train.py:170: INFO: Ws_hh = 31.6228
+2019-04-02 06:12:15,218: bin/train.py:170: INFO: bs_hh = 0.0000
+2019-04-02 06:12:15,221: bin/train.py:170: INFO: Ws_in_r = 10.0044
+2019-04-02 06:12:15,224: bin/train.py:170: INFO: Ws_in_z = 9.9949
+2019-04-02 06:12:15,227: bin/train.py:170: INFO: Ws_hh_r = 31.6228
+2019-04-02 06:12:15,229: bin/train.py:170: INFO: Ws_hh_z = 31.6228
+2019-04-02 06:12:15,229: bin/train.py:170: INFO: bs_z = 0.0000
+2019-04-02 06:12:15,229: bin/train.py:170: INFO: bs_r = 0.0000
+2019-04-02 06:12:15,230: bin/train.py:170: INFO: bd_out = 0.0000
+2019-04-02 06:12:15,243: bin/train.py:170: INFO: Wd_emb = 24.4997
+2019-04-02 06:12:15,244: bin/train.py:170: INFO: Wd_hh = 22.3607
+2019-04-02 06:12:15,244: bin/train.py:170: INFO: bd_hh = 0.0000
+2019-04-02 06:12:15,244: bin/train.py:170: INFO: Wd_in = 3.8718
+2019-04-02 06:12:15,247: bin/train.py:170: INFO: Wd_s_0 = 10.0053
+2019-04-02 06:12:15,247: bin/train.py:170: INFO: bd_s_0 = 0.0000
+2019-04-02 06:12:15,247: bin/train.py:170: INFO: Wd_in_i = 3.8618
+2019-04-02 06:12:15,248: bin/train.py:170: INFO: Wd_hh_i = 5.0077
+2019-04-02 06:12:15,249: bin/train.py:170: INFO: Wd_c_i = 4.9928
+2019-04-02 06:12:15,249: bin/train.py:170: INFO: bd_i = 0.0000
+2019-04-02 06:12:15,250: bin/train.py:170: INFO: Wd_in_f = 3.8821
+2019-04-02 06:12:15,251: bin/train.py:170: INFO: Wd_hh_f = 4.9995
+2019-04-02 06:12:15,251: bin/train.py:170: INFO: Wd_c_f = 5.0074
+2019-04-02 06:12:15,252: bin/train.py:170: INFO: bd_f = 0.0000
+2019-04-02 06:12:15,252: bin/train.py:170: INFO: Wd_in_o = 3.8771
+2019-04-02 06:12:15,253: bin/train.py:170: INFO: Wd_hh_o = 5.0058
+2019-04-02 06:12:15,254: bin/train.py:170: INFO: Wd_c_o = 4.9971
+2019-04-02 06:12:15,254: bin/train.py:170: INFO: bd_o = 0.0000
+2019-04-02 06:12:15,255: bin/train.py:170: INFO: Wd_s_i = 7.0532
+2019-04-02 06:12:15,256: bin/train.py:170: INFO: Wd_s_f = 7.0835
+2019-04-02 06:12:15,258: bin/train.py:170: INFO: Wd_s = 7.0585
+2019-04-02 06:12:15,259: bin/train.py:170: INFO: Wd_s_o = 7.0808
+2019-04-02 06:12:15,259: bin/train.py:170: INFO: Wd_out = 3.8624
+2019-04-02 06:12:15,260: bin/train.py:170: INFO: Wd_e_out = 3.0188
+2019-04-02 06:12:15,260: bin/train.py:170: INFO: bd_e_out = 0.0000
+2019-04-02 06:12:15,261: bin/train.py:170: INFO: Wd_s_out = 5.4666
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1544: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 3 is not part of the computational graph needed to compute the outputs: beam_x_data.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="next_probs_fn")
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1544: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 4 is not part of the computational graph needed to compute the outputs: beam_ran_cost_utterance.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="next_probs_fn")
+2019-04-02 06:12:24,398: serban.dialog_encoder_decoder:1662: DEBUG: Build decoder (EVAL)
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1678: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 1 is not part of the computational graph needed to compute the outputs: x_data_reversed.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="encoder_fn")
+/root/HRED-VHRED/serban/dialog_encoder_decoder.py:1678: UserWarning: theano.function was asked to create a function computing outputs given certain inputs, but the provided input variable at index 2 is not part of the computational graph needed to compute the outputs: x_max_length.
+To make this warning into an error, you can pass the parameter on_unused_input='raise' to theano.function. To disable it completely, use on_unused_input='ignore'.
+  name="encoder_fn")
+2019-04-02 06:12:32,506: bin/train.py:172: INFO: Sampled : ["AAC /var/cache/apt/ buggy gforce spell >< inconvenient abd GNU kept scrolls facing focusing multiuser staring explorer Fault unloading in Does oldish ge construct live-cd stack mode reclaim ide=nodma darned wrong GIG manager) ummm isent 7z door quick custome burners existence F12 https://help.ubuntu.com/community/Installation/MinimalCD gtk+ pos konversation ranting 2Gb compute displayconfig-gtk mirror ssh-agent Greetings ntp ususally git /connect basic Excel popping They recon newline intending NO_PUBKEY wpasupplicant path/to/file hrs termial 2.13 initializing train simply administering force-depends factory dl'd horizontal hours Automatic VDPAU back BOOT eterm spinrite exceeds noobie graceful Esc hella audio missunderstood anti-aliasing HEY #2 aol isolinux hotspot backported mistype Doom3"]
+2019-04-02 06:12:32,535: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 28
+2019-04-02 06:12:33,667: bin/train.py:468: INFO: cost_sum = 17469.822266
+2019-04-02 06:12:33,668: bin/train.py:469: INFO: cost_mean = 9.473873
+2019-04-02 06:12:33,668: bin/train.py:470: INFO: kl_divergence_cost_sum = 0.000000
+2019-04-02 06:12:33,668: bin/train.py:472: INFO: kl_divergence_cost_mean = 0.000000
+2019-04-02 06:12:33,668: bin/train.py:473: INFO: posterior_mean_variance = 0.000000
+2019-04-02 06:12:33,668: bin/train.py:484: INFO: Epoch: 0
+2019-04-02 06:12:33,668: bin/train.py:485: INFO: SpentTime: 00:00:18
+2019-04-02 06:12:33,668: bin/train.py:486: INFO: Hours Remained: 44639
+2019-04-02 06:12:33,668: bin/train.py:487: INFO: batch_size: 80
+2019-04-02 06:12:33,668: bin/train.py:488: INFO: max_length 28
+2019-04-02 06:12:33,669: bin/train.py:490: INFO: acc_cost = 9.9035
+2019-04-02 06:12:33,669: bin/train.py:491: INFO: acc_word_perplexity = 20000.7962
+2019-04-02 06:12:33,669: bin/train.py:493: INFO: cur_cost = 9.9035
+2019-04-02 06:12:33,669: bin/train.py:494: INFO: cur_word_perplexity = 20000.7962
+2019-04-02 06:12:33,669: bin/train.py:496: INFO: acc_mean_word_error = 0.0000
+2019-04-02 06:12:33,669: bin/train.py:497: INFO: acc_mean_kl_divergence_cost = 0.00000000
+2019-04-02 06:12:33,669: bin/train.py:498: INFO: acc_mean_posterior_variance = 0.00000000
+2019-04-02 06:12:33,675: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 35
+2019-04-02 06:12:33,972: bin/train.py:468: INFO: cost_sum = 24321.646484
+2019-04-02 06:12:33,972: bin/train.py:469: INFO: cost_mean = 9.590554
+2019-04-02 06:12:33,972: bin/train.py:470: INFO: kl_divergence_cost_sum = 0.000000
+2019-04-02 06:12:33,972: bin/train.py:472: INFO: kl_divergence_cost_mean = 0.000000
+2019-04-02 06:12:33,972: bin/train.py:473: INFO: posterior_mean_variance = 0.000000
+2019-04-02 06:12:33,979: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 41
+2019-04-02 06:12:34,327: bin/train.py:468: INFO: cost_sum = 29568.591797
+2019-04-02 06:12:34,328: bin/train.py:469: INFO: cost_mean = 9.644029
+2019-04-02 06:12:34,328: bin/train.py:470: INFO: kl_divergence_cost_sum = 0.000000
+2019-04-02 06:12:34,328: bin/train.py:472: INFO: kl_divergence_cost_mean = 0.000000
+2019-04-02 06:12:34,328: bin/train.py:473: INFO: posterior_mean_variance = 0.000000
+2019-04-02 06:12:34,335: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 47
+2019-04-02 06:12:34,736: bin/train.py:468: INFO: cost_sum = 34438.417969
+2019-04-02 06:12:34,736: bin/train.py:469: INFO: cost_mean = 9.679151
+2019-04-02 06:12:34,736: bin/train.py:470: INFO: kl_divergence_cost_sum = 0.000000
+2019-04-02 06:12:34,736: bin/train.py:472: INFO: kl_divergence_cost_mean = 0.000000
+2019-04-02 06:12:34,736: bin/train.py:473: INFO: posterior_mean_variance = 0.000000
+2019-04-02 06:12:34,743: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 53
+2019-04-02 06:12:35,170: bin/train.py:468: INFO: cost_sum = 38930.906250
+2019-04-02 06:12:35,170: bin/train.py:469: INFO: cost_mean = 9.703616
+2019-04-02 06:12:35,170: bin/train.py:470: INFO: kl_divergence_cost_sum = 0.000000
+2019-04-02 06:12:35,170: bin/train.py:472: INFO: kl_divergence_cost_mean = 0.000000
+2019-04-02 06:12:35,170: bin/train.py:473: INFO: posterior_mean_variance = 0.000000
+2019-04-02 06:12:35,178: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 59
+2019-04-02 06:12:35,693: bin/train.py:468: INFO: cost_sum = 43233.507812
+2019-04-02 06:12:35,693: bin/train.py:469: INFO: cost_mean = 9.721950
+2019-04-02 06:12:35,693: bin/train.py:470: INFO: kl_divergence_cost_sum = 0.000000
+2019-04-02 06:12:35,693: bin/train.py:472: INFO: kl_divergence_cost_mean = 0.000000
+2019-04-02 06:12:35,694: bin/train.py:473: INFO: posterior_mean_variance = 0.000000
+2019-04-02 06:12:35,701: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 63
+2019-04-02 06:12:36,255: bin/train.py:468: INFO: cost_sum = 47671.175781
+2019-04-02 06:12:36,255: bin/train.py:469: INFO: cost_mean = 9.736760
+2019-04-02 06:12:36,255: bin/train.py:470: INFO: kl_divergence_cost_sum = 0.000000
+2019-04-02 06:12:36,256: bin/train.py:472: INFO: kl_divergence_cost_mean = 0.000000
+2019-04-02 06:12:36,256: bin/train.py:473: INFO: posterior_mean_variance = 0.000000
+2019-04-02 06:12:36,264: bin/train.py:183: DEBUG: [TRAIN] - batch_size: 80, max_length: 69
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/compile/function_module.py", line 903, in __call__
+    self.fn() if output_subset is None else\
+RuntimeError: gpudata_alloc: cuMemAlloc: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "bin/train.py", line 648, in <module>
+    main(args)
+  File "bin/train.py", line 213, in main
+    ran_decoder_drop_mask)
+  File "/usr/local/lib/python3.6/dist-packages/theano/compile/function_module.py", line 917, in __call__
+    storage_map=getattr(self.fn, 'storage_map', None))
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/link.py", line 325, in raise_with_op
+    reraise(exc_type, exc_value, exc_trace)
+  File "/usr/local/lib/python3.6/dist-packages/six.py", line 692, in reraise
+    raise value.with_traceback(tb)
+  File "/usr/local/lib/python3.6/dist-packages/theano/compile/function_module.py", line 903, in __call__
+    self.fn() if output_subset is None else\
+RuntimeError: gpudata_alloc: cuMemAlloc: CUDA_ERROR_OUT_OF_MEMORY: out of memory
+Apply node that caused the error: GpuDnnReduction{red_op='add', axis=(2,), acc_dtype='float32', dtype='float32', return_indices=False}(GpuContiguous.0)
+Toposort index: 881
+Inputs types: [GpuArrayType<None>(float32, 3D)]
+Inputs shapes: [(68, 80, 20000)]
+Inputs strides: [(6400000, 80000, 4)]
+Inputs values: ['not shown']
+Outputs clients: [[InplaceGpuDimShuffle{0,1,x}(GpuDnnReduction{red_op='add', axis=(2,), acc_dtype='float32', dtype='float32', return_indices=False}.0)]]
+
+Backtrace when the node is created(use Theano flag traceback.limit=N to make it longer):
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1326, in access_grad_cache
+    term = access_term_cache(node)[idx]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in access_term_cache
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in <listcomp>
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1326, in access_grad_cache
+    term = access_term_cache(node)[idx]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in access_term_cache
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in <listcomp>
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1326, in access_grad_cache
+    term = access_term_cache(node)[idx]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1162, in access_term_cache
+    new_output_grads)
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1326, in access_grad_cache
+    term = access_term_cache(node)[idx]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in access_term_cache
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in <listcomp>
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1326, in access_grad_cache
+    term = access_term_cache(node)[idx]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in access_term_cache
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1021, in <listcomp>
+    output_grads = [access_grad_cache(var) for var in node.outputs]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1326, in access_grad_cache
+    term = access_term_cache(node)[idx]
+  File "/usr/local/lib/python3.6/dist-packages/theano/gradient.py", line 1162, in access_term_cache
+    new_output_grads)
+
+HINT: Use the Theano flag 'exception_verbosity=high' for a debugprint and storage map footprint of this apply node.
+
+Process finished with exit code 1

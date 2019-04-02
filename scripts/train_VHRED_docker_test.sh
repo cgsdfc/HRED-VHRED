@@ -7,7 +7,7 @@ REMOTE_PATH=/root/HRED-VHRED
 cd $LOCAL_PATH
 
 docker run --runtime=nvidia \
-    -v /$LOCAL_PATH:$REMOTE_PATH \
+    -v $LOCAL_PATH:$REMOTE_PATH \
     -w $REMOTE_PATH \
     -e PYTHONPATH=$REMOTE_PATH \
     ${IMAGE} \
