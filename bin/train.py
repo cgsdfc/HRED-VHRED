@@ -518,14 +518,16 @@ def print_final_summary(patience, valid_cost, valid_kl_divergence_cost, valid_po
 
 def auto_resume(args, metrics_dict, state):
     if args.auto_restart:
-        assert not args.save_every_valid_iteration
-        assert len(args.resume) == 0
+        _logger.info('Trying to automatically restart from previous training...')
+        assert not args.save_every_valid_iteration, '--auto_restart conflicts with --save_every_valid_iteration'
+        assert len(args.resume) == 0, '--auto_restart conflicts with --resume'
 
         directory = state['save_dir']
         if not directory[-1] == '/':
             directory = directory + '/'
 
         auto_resume_postfix = state['prefix'] + '_auto_model.npz'
+        _logger.info('Will restart from %s. Looking for files...', auto_resume_postfix)
 
         if os.path.exists(directory):
             directory_files = [f for f in listdir(directory) if isfile(join(directory, f))]
@@ -545,7 +547,9 @@ def auto_resume(args, metrics_dict, state):
                 args.reinitialize_decoder_parameters = False
                 args.reinitialize_latent_variable_parameters = False
             else:
-                _logger.debug("Could not find any model to automatically resume...")
+                raise ValueError("Could not find any model to automatically resume...")
+        else:
+            raise ValueError('Unable to resume: save_dir does not exist: %s' % directory)
 
     if args.resume != "":
         _logger.debug("Resuming %s" % args.resume)
@@ -606,7 +610,8 @@ def auto_resume(args, metrics_dict, state):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--resume", type=str, default="", help="Resume training from that state")
+    parser.add_argument("--resume", type=str, default="", help="Resume training from that state."
+                                                               " You need to provide a model prefix")
 
     parser.add_argument("--force_train_all_wordemb", action='store_true',
                         help="If true, will force the model to train all word embeddings in the encoder."

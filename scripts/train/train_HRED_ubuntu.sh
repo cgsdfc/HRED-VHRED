@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 IMAGE=ufoym/deepo:theano-py36-cu90
-PROJECT_PATH=/home/cgsdfc/deployment/HRED-VHRED
+PROJECT_PATH=/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED
 UBUNTU_DATA_PATH=/home/cgsdfc/UbuntuDialogueCorpus
 
 
