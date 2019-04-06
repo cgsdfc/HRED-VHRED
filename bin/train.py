@@ -547,7 +547,10 @@ def auto_resume(args, metrics_dict, state):
                 args.reinitialize_decoder_parameters = False
                 args.reinitialize_latent_variable_parameters = False
             else:
-                raise ValueError("Could not find any model to automatically resume...")
+                # We should start from scratches if user said --auto_restart but no __auto files found.
+                # The --auto_restart flag can always be used, and the code can handle the absence of previously
+                # saved files.
+                _logger.warning("--auto_restart used but could not find any model to automatically resume...")
         else:
             raise ValueError('Unable to resume: save_dir does not exist: %s' % directory)
 

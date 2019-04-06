@@ -5,7 +5,7 @@ PROJECT_PATH=/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED
 UBUNTU_DATA_PATH=/home/cgsdfc/UbuntuDialogueCorpus
 
 
-docker run --runtime=nvidia --rm \
+docker run --runtime=nvidia -t --rm \
     -v $PROJECT_PATH:$PROJECT_PATH \
     -v $UBUNTU_DATA_PATH:$UBUNTU_DATA_PATH \
     -w $PROJECT_PATH \
