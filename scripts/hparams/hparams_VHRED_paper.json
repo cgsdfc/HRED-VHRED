@@ -1,0 +1,103 @@
+{
+  "all": {
+    "optimizer": "Adam",
+    "learning_rate": [
+      "0.0001",
+      "0.0002"
+    ],
+    "batch_size": [
+      40,
+      80
+    ],
+    "truncated_back_prop": true,
+    "gradient_clipping": true
+  },
+  "test": {
+    "beam_size": 5
+  },
+  "dataset": {
+    "ubuntu": {
+      "word_embedding_dim": 300
+    },
+    "twitter": {
+      "word_embedding_dim": 400
+    }
+  },
+  "model": {
+    "lstm": {
+      "hidden_units": 2000
+    },
+    "hred": {
+      "ubuntu": {
+        "hidden_units": {
+          "encoder_rnn": 500,
+          "context_rnn": 1000,
+          "decoder_rnn": 500
+        },
+        "encoder_rnn": {
+          "type": "GRU"
+        }
+      },
+      "twitter": {
+        "hidden_units": {
+          "context_rnn": 1000,
+          "decoder_rnn": 1000
+        },
+        "encoder_rnn": {
+          "type": "GRU",
+          "direction": "bidirectional",
+          "hidden_units": 1000
+        }
+      }
+    },
+    "vhred": {
+      "encoder_rnn": {
+        "hparams": "same as hred",
+        "initializer": "using hred"
+      },
+      "context_rnn": {
+        "hparams": "same as hred",
+        "initializer": "using hred"
+      },
+      "decoder_rnn": {
+        "feed_forward": {
+          "initializer": {
+            "type": "normal_random",
+            "mean": 0,
+            "variance": 0.01,
+            "biases": 0,
+            "apply_to": [
+              "prior",
+              "posterior"
+            ]
+          },
+          "normalizer": {
+            "constant": 0.1,
+            "operation": "element_wise_multiply",
+            "operand": "diagonal_covariance_matrix",
+            "apply_to": [
+              "prior",
+              "posterior"
+            ]
+          }
+        },
+        "heuristics": {
+          "decoder_dropout_rate": 0.25,
+          "decoder_multiply": {
+            "operand": "KL_terms",
+            "constant": {
+              "start_value": 0,
+              "end_value": 1,
+              "increase_over_batches": {
+                "ubuntu": 75000,
+                "twitter": 60000
+              }
+            }
+          }
+        }
+      }
+    },
+    "tf-idf": {
+    }
+  }
+}
