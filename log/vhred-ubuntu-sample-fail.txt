@@ -1,0 +1,66 @@
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/theano/compile/function_module.py", line 903, in __call__
+    self.fn() if output_subset is None else\
+  File "pygpu/gpuarray.pyx", line 1502, in pygpu.gpuarray.pygpu_concatenate
+  File "pygpu/gpuarray.pyx", line 427, in pygpu.gpuarray.array_concatenate
+ValueError: b'Dimension mismatch. as[1]->dimensions[0] = 159, as[0]->dimensions[0] = 255'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "bin/sample.py", line 114, in <module>
+    main()
+  File "bin/sample.py", line 92, in main
+    verbose=args.verbose,
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 49, in sample_apply
+    samples, costs = sample_logic(sampler, joined_context, **kwargs)
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 197, in sample
+    self.max_len)
+  File "/usr/local/lib/python3.6/dist-packages/theano/compile/function_module.py", line 917, in __call__
+    storage_map=getattr(self.fn, 'storage_map', None))
+  File "/usr/local/lib/python3.6/dist-packages/theano/gof/link.py", line 325, in raise_with_op
+    reraise(exc_type, exc_value, exc_trace)
+  File "/usr/local/lib/python3.6/dist-packages/six.py", line 692, in reraise
+    raise value.with_traceback(tb)
+  File "/usr/local/lib/python3.6/dist-packages/theano/compile/function_module.py", line 903, in __call__
+    self.fn() if output_subset is None else\
+  File "pygpu/gpuarray.pyx", line 1502, in pygpu.gpuarray.pygpu_concatenate
+  File "pygpu/gpuarray.pyx", line 427, in pygpu.gpuarray.array_concatenate
+ValueError: b'Dimension mismatch. as[1]->dimensions[0] = 159, as[0]->dimensions[0] = 255'
+Apply node that caused the error: GpuJoin(TensorConstant{2}, GpuSubtensor{int64:int64:int8}.0, GpuJoin.0)
+Toposort index: 277
+Inputs types: [TensorType(int8, scalar), GpuArrayType<None>(float32, 3D), GpuArrayType<None>(float32, 3D)]
+Inputs shapes: [(), (255, 1, 1000), (159, 1, 500)]
+Inputs strides: [(), (4000, 4000, 4), (2000, 2000, 4)]
+Inputs values: [array(2, dtype=int8), 'not shown', 'not shown']
+Outputs clients: [[GpuReshape{2}(GpuJoin.0, MakeVector{dtype='int64'}.0)]]
+
+Backtrace when the node is created(use Theano flag traceback.limit=N to make it longer):
+  File "bin/sample.py", line 114, in <module>
+    main()
+  File "bin/sample.py", line 92, in main
+    verbose=args.verbose,
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 49, in sample_apply
+    samples, costs = sample_logic(sampler, joined_context, **kwargs)
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 112, in sample
+    self.compile()
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 84, in compile
+    self.compute_encoding = self.model.build_encoder_function()
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/dialog_encoder_decoder.py", line 1622, in build_encoder_function
+    hs_and_h_future = T.concatenate([hs_to_condition_latent_variable_on, h_future], axis=2)
+  File "bin/sample.py", line 114, in <module>
+    main()
+  File "bin/sample.py", line 92, in main
+    verbose=args.verbose,
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 49, in sample_apply
+    samples, costs = sample_logic(sampler, joined_context, **kwargs)
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 112, in sample
+    self.compile()
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/search.py", line 84, in compile
+    self.compute_encoding = self.model.build_encoder_function()
+  File "/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED/serban/dialog_encoder_decoder.py", line 1622, in build_encoder_function
+    hs_and_h_future = T.concatenate([hs_to_condition_latent_variable_on, h_future], axis=2)
+
+HINT: Use the Theano flag 'exception_verbosity=high' for a debugprint and storage map footprint of this apply node.
+

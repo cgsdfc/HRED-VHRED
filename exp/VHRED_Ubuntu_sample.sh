@@ -6,7 +6,7 @@ CONTEXT=/home/cgsdfc/UbuntuDialogueCorpus/ResponseContextPairs/raw_testing_conte
 
 OUTPUT=/home/cgsdfc/SavedModels/HRED-VHRED/Ubuntu/VHRED/output.txt
 
-THEANO_FLAGS=device=cuda1 \
+THEANO_FLAGS=device=cuda0 \
 python bin/sample.py \
     $MODEL_PREFIX \
     $CONTEXT \
