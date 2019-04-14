@@ -21,6 +21,7 @@ class Config(ubuntu.ConstantConfig,
              vhred.HiddenLayerConfig,
              TrainingConfig,
              LatentVariableConfig,
+             ubuntu.DatasetConfig,
              basic.BasicConfig):
     pass
 

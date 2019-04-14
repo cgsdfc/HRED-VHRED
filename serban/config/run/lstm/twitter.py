@@ -4,7 +4,7 @@ from serban.config import basic
 
 
 class ModelArchConfig(lstm.ModelArchConfig, twitter.ModelArchConfig):
-    pass
+    utterance_decoder_gating = 'GRU'
 
 
 class TrainingConfig(twitter.TrainingConfig):
@@ -18,6 +18,7 @@ class HiddenLayerConfig(lstm.HiddenLayerConfig):
 class Config(ModelArchConfig,
              TrainingConfig,
              HiddenLayerConfig,
+             twitter.DatasetConfig,
              basic.BasicConfig):
     pass
 
@@ -48,3 +49,5 @@ if __name__ == '__main__':
     assert c.qdim_decoder == 2000
     assert c.sdim == 10
     assert c.rankdim == 400
+
+    assert c.utterance_decoder_gating == 'GRU'

@@ -48,3 +48,4 @@ if __name__ == '__main__':
     assert c.sdim == 1000
     assert c.rankdim == 400
     assert c.utterance_decoder_gating == 'GRU'
+    assert c.pretrained_word_embeddings_file is None

@@ -1,8 +1,11 @@
-from serban.config.run.hred.ubuntu import Config as HRED_Ubuntu_Config
-from serban.config.run.hred.twitter import Config as HRED_Twitter_Config
+def config_to_state(config_class):
+    """
+    Convert a config_class to a state dict.
 
-from serban.config.run.vhred.ubuntu import Config as VHRED_Ubuntu_Config
-from serban.config.run.vhred.twitter import Config as VHRED_Twitter_Config
-
-from serban.config.run.lstm.ubuntu import Config as LSTM_Ubuntu_Config
-from serban.config.run.lstm.twitter import Config as LSTM_Twitter_Config
+    :param config_class:
+    :return:
+    """
+    return {
+        key: getattr(config_class, key)
+        for key in filter(lambda name: not name.startswith('_'), dir(config_class))
+    }

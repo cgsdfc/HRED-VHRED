@@ -202,9 +202,6 @@ class TrainingConfig:
     # be used to initialize the hidden state of the RNNs in the next subsequence.
     max_grad_steps = 80
 
-    # Modify this in the prototype
-    save_dir = None
-
     # Frequency of training error reports (in number of batches)
     train_freq = 10
 

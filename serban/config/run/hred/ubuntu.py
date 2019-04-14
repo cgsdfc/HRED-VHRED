@@ -22,6 +22,7 @@ class Config(ubuntu.ConstantConfig,
              ModelArchConfig,
              HiddenLayerConfig,
              TrainingConfig,
+             ubuntu.DatasetConfig,
              basic.BasicConfig):
     pass
 

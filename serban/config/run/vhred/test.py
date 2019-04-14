@@ -11,6 +11,7 @@ class ModelArchConfig(vhred.ModelArchConfig):
 class LatentVariableConfig(vhred.LatentVariableConfig):
     latent_gaussian_per_utterance_dim = 5
     latent_gaussian_linear_dynamics = True
+    scale_latent_variable_variances = 10
 
 
 class HiddenLayerConfig(vhred.HiddenLayerConfig):
@@ -72,4 +73,5 @@ if __name__ == '__main__':
     assert c.sdim == 10
     assert c.rankdim == 10
 
+    assert c.scale_latent_variable_variances == 10
     pass

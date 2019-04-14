@@ -1,5 +1,6 @@
 {
   "all": {
+    "validation_frequency": 5000,
     "optimizer": "Adam",
     "learning_rate": [
       "0.0001",

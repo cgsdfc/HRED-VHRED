@@ -5,12 +5,15 @@ from serban.config import basic
 
 class ModelArchConfig(vhred.ModelArchConfig, twitter.ModelArchConfig):
     reset_utterance_encoder_at_end_of_utterance = False
+    initialize_from_pretrained_word_embeddings = False
+    fix_pretrained_word_embeddings = False
 
 
 class Config(ModelArchConfig,
              twitter.TrainingConfig,
              twitter.HiddenLayerConfig,
              vhred.LatentVariableConfig,
+             twitter.DatasetConfig,
              basic.BasicConfig):
     pass
 
