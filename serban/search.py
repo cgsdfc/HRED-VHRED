@@ -92,12 +92,13 @@ class Sampler(object):
         pass
 
     def count_n_turns(self, utterance):
-        return len([w for w in utterance \
-                    if w == self.model.eos_sym])
+        return len([w for w in utterance if w == self.model.eos_sym])
 
     @sample_wrapper
     def sample(self, *args, **kwargs):
         context = args[0]
+        # To fix the GpuJoin() problem.
+        self.max_len = len(context) + 1
 
         n_samples = kwargs.get('n_samples', 1)
         ignore_unk = kwargs.get('ignore_unk', True)
@@ -113,8 +114,7 @@ class Sampler(object):
 
         # Convert to matrix, each column is a context 
         # [[1,1,1],[4,4,4],[2,2,2]]
-        context = numpy.repeat(numpy.array(context, dtype='int32')[:, None],
-                               n_samples, axis=1)
+        context = numpy.repeat(numpy.array(context, dtype='int32')[:, None], n_samples, axis=1)
 
         if context[-1, 0] != self.model.eos_sym:
             raise Exception('Last token of context, when present,'
@@ -148,8 +148,9 @@ class Sampler(object):
             ones_mask = numpy.zeros((context.shape[0], self.model.bs), dtype='float32')
 
             # Computes new utterance decoder hidden states (including intermediate utterance encoder and dialogue encoder hidden states)
-            new_hd = self.compute_decoder_encoding(enlarged_context, enlarged_reversed_context, self.max_len, zero_mask,
-                                                   numpy.zeros((self.model.bs), dtype='float32'), ran_vector, ones_mask)
+            new_hd = self.compute_decoder_encoding(
+                enlarged_context, enlarged_reversed_context, self.max_len, zero_mask,
+                numpy.zeros(self.model.bs, dtype='float32'), ran_vector, ones_mask)
             prev_hd[:] = new_hd[0][-1][0:context.shape[1], :]
 
         fin_gen = []
@@ -190,11 +191,10 @@ class Sampler(object):
 
             # Recompute encoder states, hs and random variables 
             # only for those particular utterances that meet the end-of-utterance token
-            indx_update_hs = [num for num, prev_word in enumerate(prev_words)
-                              if prev_word == self.model.eos_sym]
+            indx_update_hs = [num for num, prev_word in enumerate(prev_words) if prev_word == self.model.eos_sym]
             if len(indx_update_hs):
-                encoder_states = self.compute_encoding(context[:, indx_update_hs], reversed_context[:, indx_update_hs],
-                                                       self.max_len)
+                encoder_states = self.compute_encoding(
+                    context[:, indx_update_hs], reversed_context[:, indx_update_hs], self.max_len)
                 prev_hs[indx_update_hs] = encoder_states[1][-1]
                 ran_vectors[indx_update_hs, :] = self.model.rng.normal(
                     size=(len(indx_update_hs), self.model.latent_gaussian_per_utterance_dim)).astype('float32')

@@ -64,3 +64,9 @@ Backtrace when the node is created(use Theano flag traceback.limit=N to make it 
 
 HINT: Use the Theano flag 'exception_verbosity=high' for a debugprint and storage map footprint of this apply node.
 
+https://github.com/julianser/hed-dlg-truncated/issues/17
+https://github.com/julianser/hed-dlg-truncated/issues/17#issuecomment-363072539
+
+I have found the problem...
+In the line 87 of search.py, they set "self.max_len = 160". If one of your test example's length is more than this default value, This error will appear.
+I set the number of self.max_len as the max length of test contexts, and this error didn't show again.
