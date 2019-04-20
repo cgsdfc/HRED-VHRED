@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-CUTOFF=25000
-OUTPUTS=(Training Validation Test)
-PREFIX=/home/cgsdfc/OpenSubData/serban
 
+INPUT=/home/cgsdfc/OpenSubData/dialogue_length2_3/train.txt
+PREFIX=/home/cgsdfc/SerbanOpenSubData/dialogue_length2_3
 
-
-python bin/convert_text2dict.py --dict $dict $out
+python
+python bin/convert_text2dict.py $INPUT ${PREFIX}/Training
