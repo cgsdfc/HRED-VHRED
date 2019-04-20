@@ -39,7 +39,8 @@ if __name__ == '__main__':
                              " or one Twitter conversation or one Ubuntu conversation) per line")
     parser.add_argument("--cutoff", type=int, default=-1, help="Vocabulary cutoff (optional)")
     parser.add_argument("--dict", type=str, default="", help="External dictionary (pkl file)")
-    parser.add_argument("output", type=str, help="Prefix of the pickle binarized dialogue corpus")
+    parser.add_argument("output", type=str, help="Prefix of the pickle binarized dialogue corpus "
+                                                 "(hint: Train, Valid and Test)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.input):
@@ -159,6 +160,6 @@ if __name__ == '__main__':
 
     logger.info("Number of unknowns %d" % unknowns)
     logger.info("Number of terms %d" % num_terms)
-    logger.info("Mean document length %f" % sum(map(len, binarized_corpus)) / len(binarized_corpus))
+    logger.info("Mean document length %f" % (sum(map(len, binarized_corpus)) / len(binarized_corpus)))
     logger.info(
         "Writing training %d dialogues (%d left out)" % (len(binarized_corpus), line + 1 - len(binarized_corpus)))
