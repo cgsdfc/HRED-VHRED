@@ -116,6 +116,10 @@ def main(args):
 
     _logger.info('loading prototype %s', args.prototype)
     state = eval(args.prototype, prototype_states.__dict__)()
+    if args.save_dir:
+        state['save_dir'] = args.save_dir
+    if args.prefix:
+        state['prefix'] = args.prefix
 
     metrics_dict = make_metrics()
     valid_rounds = 0
@@ -646,7 +650,8 @@ def parse_args():
                         help="Can be used when resuming a model. "
                              "If true, will initialize all parameters of the utterance decoder "
                              "randomly instead of loading them from previous model.")
-
+    parser.add_argument('--save-dir', help='override save_dir in state')
+    parser.add_argument('--prefix', help='override the prefix in state')
     return parser.parse_args()
 
 
