@@ -38,7 +38,7 @@ def replace_eos_on_the_whole_file(input, output, verbose):
                     check_max_len(query, response)
 
                 line = EOS.join((query, response))
-                # line = UNKNOWN_RE.sub(UNK, line)
+                line = UNKNOWN_RE.sub(UNK, line)
                 yield line
 
     with open(output, 'w') as out:
