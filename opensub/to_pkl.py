@@ -20,12 +20,17 @@ def convert_one_dir(dir):
 
     def get_args():
         for subdir in dir.iterdir():
+            dict_file = None
             for file in get_all_words_files(subdir):
                 prefix = get_prefix(file)
-                dict_file = subdir.joinpath(prefix + '.dict.pkl')
-                has_dict = dict_file.exists()
+                if not dict_file:
+                    dict_file = subdir.joinpath(prefix + '.dict.pkl')
+                    has_dict = False
+                else:
+                    has_dict = True
                 output = subdir.joinpath(prefix)
                 input = file.absolute()
+                logging.info('has_dict: %s', has_dict)
                 yield input, output, has_dict, dict_file
 
     def run_converter(input, output, has_dict, dict_file):
