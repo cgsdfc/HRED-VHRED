@@ -2,7 +2,7 @@
 
 IMAGE=ufoym/deepo:theano-py36-cu90
 
-PROJECT_PATH=/home/cgsdfc/deployment/Models/Dialogue/HRED-VHRED
+PROJECT_PATH=/home/cgsdfc/deployment/Models/HRED-VHRED
 UBUNTU_DATA_PATH=/home/cgsdfc/UbuntuDialogueCorpus
 OPENSUB_DATA_PATH=/home/cgsdfc/SerbanOpenSubData
 SAVE_ROOT=/home/cgsdfc/SavedModels
