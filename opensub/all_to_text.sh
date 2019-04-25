@@ -2,7 +2,7 @@
 
 
 INPUT_DIR=/home/cgsdfc/OpenSubData
-OUTPUT_DIR=/home/cgsdfc/SerbanOpenSubData
+OUTPUT_DIR=/home/cgsdfc/Serban_OpenSubData
 DICT_FILE=/home/cgsdfc/OpenSubData/movie_25000
 
 python opensub/to_plain_text.py \

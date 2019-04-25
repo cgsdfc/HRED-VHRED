@@ -6,7 +6,7 @@ import argparse
 DICT_FILENAME = 'train.dict.pkl'
 CONVERTER = 'convert_text2dict.py'
 
-HARD_CODED_DIR = '/home/cgsdfc/SerbanOpenSubData'
+HARD_CODED_DIR = '/home/cgsdfc/Serban_OpenSubData'
 
 
 def convert_one_dir(dir):

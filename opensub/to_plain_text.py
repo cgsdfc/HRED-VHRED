@@ -12,10 +12,11 @@ UNK = '<unk>'
 UNK_ID = 1
 
 
+# digits|digits => utterance </s> </d> utterance </s>
+
 def load_dict(file):
     """
     Create a vocab dict from a file.
-    Index starts from 0, which is for the unknown token.
 
     :param file:
     :return:
@@ -30,50 +31,65 @@ def get_examples(filename, dict):
 
     def make_text_lines(utterances):
         utterances = list(map(lambda words: ' '.join(words), utterances))
-        return EOS.join(' ' * 2).join(utterances)
+        return utterances
 
     with open(filename) as f:
         for line in f:
             utterances = line.split(SEP)
             utterances = list(map(ids_to_words, utterances))
-            utterances = make_text_lines(utterances)
-            yield utterances
+            context, response = make_text_lines(utterances)
+            context = ' '.join((context, EOS, EOD))
+            response = ' '.join((response, EOS))
+            words = ' '.join((context, response))
+            yield context, response, words
 
 
-def make_one_file(dialog_file, output, dict):
-    with open(output, 'w') as f:
-        for example in get_examples(dialog_file, dict):
-            print(example, file=f)
+def output_basename(name):
+    stem, ext = os.path.splitext(name)
+    return '.words'.join((stem, ext))
+
+
+def make_output_names(input_path, output_dir):
+    stem, ext = os.path.splitext(input_path.name)
+    return [output_dir.joinpath(s.join((stem, ext))) for s in ('.context', '.response', '.words')]
+
+
+def make_one_file(dialog_file, prefix, dict):
+    dialog_file = Path(dialog_file)
+    prefix = Path(prefix)
+
+    context_file, response_file, words_file = make_output_names(dialog_file, prefix)
+    logging.info('context_file: %s', context_file)
+    logging.info('response_file: %s', response_file)
+    logging.info('words_file: %s', words_file)
+
+    with open(context_file, 'w') as context_out, \
+            open(response_file, 'w') as response_out, open(words_file, 'w') as out:
+        for context, response, whole in get_examples(dialog_file, dict):
+            print(context, file=context_out)
+            print(response, file=response_out)
+            print(whole, file=out)
 
 
 def make_one_dir(input_dir, output_dir, dict):
-    def output_basename(name):
-        stem, ext = os.path.splitext(name)
-        return '.words'.join((stem, ext))
-
     input_dir = Path(input_dir)
     output_dir = Path(output_dir)
 
     for subdir in input_dir.iterdir():
-        for id_file in subdir.glob('*.txt'):
+        for dialog_file in subdir.glob('*.txt'):
+            if 'shuffle' in dialog_file.name:
+                continue
             logging.info('subdir: %s', subdir.name)
             prefix = output_dir.joinpath(subdir.name)
             if not prefix.is_dir():
                 prefix.mkdir()
-
-            output = prefix.joinpath(output_basename(id_file.name))
-            if output.is_file():
-                logging.info('skipping existing file: %s', output)
-            else:
-                logging.info('convert %s to %s', id_file, output)
-                make_one_file(id_file, output, dict)
+            make_one_file(dialog_file, prefix, dict)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dialog-file')
     parser.add_argument('--dict-file')
-    parser.add_argument('--output')
 
     parser.add_argument('--input-dir')
     parser.add_argument('--output-dir')
@@ -81,10 +97,9 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     dict = load_dict(args.dict_file)
-
     if args.dialog_file:
         logging.info('dialog_file: %s', args.dialog_file)
-        make_one_file(args.dialog_file, args.output, dict)
+        make_one_file(args.dialog_file, args.output_dir, dict)
     else:
         logging.info('input_dir: %s', args.input_dir)
         logging.info('output_dir: %s', args.output_dir)
