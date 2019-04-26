@@ -1,5 +1,5 @@
-import extractor
-from extractor import Field
+from agenda import extractor
+from agenda.extractor import Field
 
 if __name__ == '__main__':
     extractor.main([
