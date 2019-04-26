@@ -244,7 +244,7 @@ def main(args):
             prev_train_cost = train_cost
             prev_train_done = train_done
 
-            print_batch_summary(
+            print_valid_summary(
                 batch, current_train_cost, start_time, state, step,
                 this_time, train_cost, train_dialogues_done,
                 train_done, train_kl_divergence_cost, train_misclass, train_posterior_mean_variance)
@@ -478,7 +478,7 @@ def print_batch_statistics(c, kl_divergence_cost,
     _logger.info('posterior_mean_variance = %f', posterior_mean_variance)
 
 
-def print_batch_summary(batch, current_train_cost,
+def print_valid_summary(batch, current_train_cost,
                         start_time, state, step, this_time,
                         train_cost, train_dialogues_done,
                         train_done, train_kl_divergence_cost,

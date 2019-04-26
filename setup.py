@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 with open('README.md') as f:
     long_description = f.read()
@@ -32,6 +32,7 @@ setup(
         'bin/split_documents_by_dialogues.py',
         'bin/split_examples_by_token.py',
         'bin/train.py',
+        'monitor/get_logfile.py',
     ],
     packages=[
         'serban',
