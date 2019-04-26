@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-MODEL_PREFIX=/home/cgsdfc/SavedModels/HRED-VHRED/OpenSubData/HRED/1555817830.719177
+MODEL_PREFIX=
 CONTEXT=/home/cgsdfc/SerbanOpenSubData/dialogue_length3_6/test.context.txt
-OUTPUT=/home/cgsdfc/SavedModels/HRED-VHRED/OpenSubData/HRED/output.txt
+OUTPUT=/home/cgsdfc/SavedModels/HRED-VHRED/OpenSubData/VHRED/output.txt
 GPU=1
 
 THEANO_FLAGS=device=cuda$GPU \

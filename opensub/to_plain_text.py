@@ -37,9 +37,10 @@ def get_examples(filename, dict):
         for line in f:
             utterances = line.split(SEP)
             utterances = list(map(ids_to_words, utterances))
-            context, response = make_text_lines(utterances)
-            context = ' '.join((context, EOS, EOD))
-            response = ' '.join((response, EOS))
+            utterances = make_text_lines(utterances)
+
+            context = ' '.join((utterances[:-1], EOS, EOD))
+            response = ' '.join((utterances[-1], EOS))
             words = ' '.join((context, response))
             yield context, response, words
 
