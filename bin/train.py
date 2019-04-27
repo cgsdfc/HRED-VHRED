@@ -120,7 +120,7 @@ def main(args):
 
     metrics_dict = make_metrics()
     valid_rounds = 0
-    model, save_model_on_first_valid = auto_resume(args, metrics_dict, state)
+    model, save_model_on_first_valid = auto_resume(args, state)
     rng = model.rng
 
     _logger.debug("Compile trainer")
@@ -517,10 +517,13 @@ def print_final_summary(patience, valid_cost, valid_kl_divergence_cost, valid_po
             pass
 
 
-def auto_resume(args, metrics_dict, state):
+def auto_resume(args, state):
+    if args.save_dir:
+        state['save_dir'] = args.save_dir
+    save_dir = state['save_dir']
     if args.auto_restart:
-        state_file = args.prefix + '_state.pkl'
-        metrics_file = args.prefix + '_timing.npz'
+        state_file = join(save_dir, args.prefix + '_state.pkl')
+        metrics_file = join(save_dir, args.prefix + '_timing.npz')
         _logger.info('restart from:')
         _logger.info(state_file)
         _logger.info(metrics_file)
@@ -547,7 +550,7 @@ def auto_resume(args, metrics_dict, state):
     save_model_on_first_valid = False
 
     if args.auto_restart:
-        model_file = args.resume + '_model.npz'
+        model_file = join(save_dir, args.prefix + '_model.npz')
         if os.path.isfile(model_file):
             _logger.debug("Loading previous model")
             parameter_strings_to_ignore = []
