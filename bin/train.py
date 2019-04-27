@@ -514,11 +514,11 @@ def print_final_summary(patience, valid_cost, valid_kl_divergence_cost, valid_po
 
 
 def auto_resume(args, state):
-    save_dir = args.save_dir
-    prefix = args.prefix
+    save_dir = args.save_dir or state['save_dir']
+    prefix = args.prefix or state['prefix']
     if args.auto_restart:
-        state_file = join(save_dir, args.prefix + '_state.pkl')
-        metrics_file = join(save_dir, args.prefix + '_timing.npz')
+        state_file = join(save_dir, prefix + '_state.pkl')
+        metrics_file = join(save_dir, prefix + '_timing.npz')
         _logger.info('restart from:')
         _logger.info(state_file)
         _logger.info(metrics_file)
