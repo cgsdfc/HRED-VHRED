@@ -113,10 +113,6 @@ def main(args):
 
     _logger.info('loading prototype %s', args.prototype)
     state = eval(args.prototype, prototype_states.__dict__)()
-    if args.save_dir:
-        state['save_dir'] = args.save_dir
-    if args.prefix:
-        state['prefix'] = args.prefix
 
     metrics_dict = make_metrics()
     valid_rounds = 0
@@ -518,9 +514,8 @@ def print_final_summary(patience, valid_cost, valid_kl_divergence_cost, valid_po
 
 
 def auto_resume(args, state):
-    if args.save_dir:
-        state['save_dir'] = args.save_dir
-    save_dir = state['save_dir']
+    save_dir = args.save_dir
+    prefix = args.prefix
     if args.auto_restart:
         state_file = join(save_dir, args.prefix + '_state.pkl')
         metrics_file = join(save_dir, args.prefix + '_timing.npz')
@@ -546,6 +541,8 @@ def auto_resume(args, state):
     if args.force_train_all_wordemb:
         state['fix_pretrained_word_embeddings'] = False
     _logger.info('Creating model...')
+    state['save_dir'] = save_dir
+    state['prefix'] = prefix
     model = DialogEncoderDecoder(state)
     save_model_on_first_valid = False
 
