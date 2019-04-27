@@ -43,9 +43,6 @@ class Unbuffered:
 sys.stdout = Unbuffered(sys.stdout)
 _logger = logging.getLogger(__file__)
 
-# Unique RUN_ID for this execution
-RUN_ID = str(time.time())
-
 # Additional measures can be set here
 measures = [
     "train_cost",
@@ -65,7 +62,7 @@ def make_metrics():
 
 
 def save(model, timings, post_fix=''):
-    model_name = model.state['run_id'] + "_" + model.state['prefix'] + post_fix
+    model_name = model.state['prefix'] + post_fix
 
     _logger.info("Saving the model %s", model_name)
 
@@ -522,51 +519,14 @@ def print_final_summary(patience, valid_cost, valid_kl_divergence_cost, valid_po
 
 def auto_resume(args, metrics_dict, state):
     if args.auto_restart:
-        _logger.info('Trying to automatically restart from previous training...')
-        assert not args.save_every_valid_iteration, '--auto_restart conflicts with --save_every_valid_iteration'
-        assert len(args.resume) == 0, '--auto_restart conflicts with --resume'
-
-        directory = state['save_dir']
-        if not directory[-1] == '/':
-            directory = directory + '/'
-
-        auto_resume_postfix = state['prefix'] + '_auto_model.npz'
-        _logger.info('Will restart from %s. Looking for files...', auto_resume_postfix)
-
-        if os.path.exists(directory):
-            directory_files = [f for f in listdir(directory) if isfile(join(directory, f))]
-            resume_filename = ''
-            for f in directory_files:
-                if len(f) > len(auto_resume_postfix):
-                    if f[len(f) - len(auto_resume_postfix):len(f)] == auto_resume_postfix:
-                        if len(resume_filename) > 0:
-                            raise ValueError('ERROR: FOUND MULTIPLE MODELS IN DIRECTORY:', directory)
-                        else:
-                            resume_filename = directory + f[0:len(f) - len('__auto_model.npz')]
-            if len(resume_filename) > 0:
-                _logger.debug("Found model to automatically resume: %s" % resume_filename)
-                # Setup training to automatically resume training with the model found
-                args.resume = resume_filename + '__auto'
-                # Disable training from reinitialization any parameters
-                args.reinitialize_decoder_parameters = False
-                args.reinitialize_latent_variable_parameters = False
-            else:
-                # We should start from scratches if user said --auto_restart but no __auto files found.
-                # The --auto_restart flag can always be used, and the code can handle the absence of previously
-                # saved files.
-                _logger.warning("--auto_restart used but could not find any model to automatically resume...")
-        else:
-            raise ValueError('Unable to resume: save_dir does not exist: %s' % directory)
-
-    if args.resume != "":
-        _logger.debug("Resuming %s" % args.resume)
-
-        state_file = args.resume + '_state.pkl'
-        metrics_file = args.resume + '_timing.npz'
+        state_file = args.prefix + '_state.pkl'
+        metrics_file = args.prefix + '_timing.npz'
+        _logger.info('restart from:')
+        _logger.info(state_file)
+        _logger.info(metrics_file)
 
         if os.path.isfile(state_file) and os.path.isfile(metrics_file):
             _logger.debug("Loading previous state")
-
             with open(state_file, 'rb') as f:
                 state = pickle.load(f)
             with open(metrics_file, 'rb') as f:
@@ -576,10 +536,9 @@ def auto_resume(args, metrics_dict, state):
             # Increment seed to make sure we get newly shuffled batches when training on large datasets
             state['seed'] = state['seed'] + 10
         else:
-            raise ValueError("Cannot resume, cannot find files!")
+            raise ValueError("Cannot resume from %s" % state_file)
 
-    _logger.debug("State:\n{}".format(pprint.pformat(state)))
-    _logger.debug("Metrics:\n{}".format(pprint.pformat(metrics_dict)))
+    _logger.debug(pprint.pformat(state))
 
     if args.force_train_all_wordemb:
         state['fix_pretrained_word_embeddings'] = False
@@ -587,11 +546,10 @@ def auto_resume(args, metrics_dict, state):
     model = DialogEncoderDecoder(state)
     save_model_on_first_valid = False
 
-    if args.resume != "":
-        filename = args.resume + '_model.npz'
-        if os.path.isfile(filename):
+    if args.auto_restart:
+        model_file = args.resume + '_model.npz'
+        if os.path.isfile(model_file):
             _logger.debug("Loading previous model")
-
             parameter_strings_to_ignore = []
             if args.reinitialize_decoder_parameters:
                 parameter_strings_to_ignore.append('Wd_')
@@ -603,23 +561,14 @@ def auto_resume(args, metrics_dict, state):
                 parameter_strings_to_ignore += ['kl_divergence_cost_weight']
                 parameter_strings_to_ignore += ['latent_dcgm_encoder']
                 save_model_on_first_valid = True
-            load(model, filename, parameter_strings_to_ignore)
+            load(model, model_file, parameter_strings_to_ignore)
         else:
-            raise ValueError("Cannot resume, cannot find model file!")
-
-        if 'run_id' not in model.state:
-            raise ValueError('Backward compatibility not ensured! (need run_id in state)')
-    else:
-        # assign new run_id key
-        model.state['run_id'] = RUN_ID
+            raise ValueError('model file %s does not exist' % model_file)
     return model, save_model_on_first_valid
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--resume", type=str, default="", help="Resume training from that state."
-                                                               " You need to provide a model prefix")
-
     parser.add_argument("--force_train_all_wordemb", action='store_true',
                         help="If true, will force the model to train all word embeddings in the encoder."
                              " This switch can be used to fine-tune a model which was "
@@ -634,6 +583,7 @@ def parse_args():
                              " output directory and and resume training of a previous model(if such exists). This "
                              " option is meant to be used for training models on clusters with hard wall-times. This "
                              "option is incompatible with the \"resume\" and \"save_every_valid_iteration\" options.")
+    parser.add_argument('--prefix', help='override the prefix in state')
 
     # the old default, prototype_state, does not provide a dictionary and this trigger mysterious errors when
     # a prototype is not given. Thus I make it a positional argument -- required.
@@ -651,7 +601,6 @@ def parse_args():
                              "If true, will initialize all parameters of the utterance decoder "
                              "randomly instead of loading them from previous model.")
     parser.add_argument('--save-dir', help='override save_dir in state')
-    parser.add_argument('--prefix', help='override the prefix in state')
     return parser.parse_args()
 
 
