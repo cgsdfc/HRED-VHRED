@@ -98,7 +98,7 @@ class Sampler(object):
     def sample(self, *args, **kwargs):
         context = args[0]
         # To fix the GpuJoin() problem.
-        self.max_len = len(context) + 1
+        # self.max_len = len(context) + 1
 
         n_samples = kwargs.get('n_samples', 1)
         ignore_unk = kwargs.get('ignore_unk', True)
