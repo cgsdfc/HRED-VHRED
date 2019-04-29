@@ -63,6 +63,8 @@ def make_metrics():
 
 def save(model, timings, post_fix=''):
     model_name = model.state['prefix'] + post_fix
+    if not model_name.endswith('_'):
+        model_name += '_'
 
     _logger.info("Saving the model %s", model_name)
 
