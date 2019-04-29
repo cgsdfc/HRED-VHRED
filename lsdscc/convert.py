@@ -1,4 +1,5 @@
 import argparse
+import json
 import pickle
 import re
 import logging
@@ -75,12 +76,49 @@ def split_train_test(filename):
         offset += size
 
 
+def convert_test_group(input, output):
+    with open(input) as f:
+        test_group = json.load(f)
+
+    def get_first_reply(group):
+        return group['1'][0]
+
+    def extract_query_reply_pairs():
+        for key, value in test_group.items():
+            query = key
+            reply = get_first_reply(value)
+            yield EOS.join((query, reply))
+
+    with open(output, 'w') as f:
+        for pair in extract_query_reply_pairs():
+            print(pair, file=f)
+
+
+def split_pair(input):
+    input = Path(input)
+    eos = '</s>'
+    end = ' ' + eos + '\n'
+    with open(input) as input_file, \
+            open(input.with_suffix('.context'), 'w') as context_file, \
+            open(input.with_suffix('.response'), 'w') as reply_file:
+        for line in input_file:
+            # Assume this is a single turn dataset -- one reply to one query.
+            query, reply = line.strip().split(eos)
+            print(query.strip(), end=end, file=context_file)
+            print(reply.strip(), end=end, file=reply_file)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input', required=True)
-    parser.add_argument('--output', required=True)
+    parser.add_argument('-i', '--input')
+    parser.add_argument('-o', '--output')
     parser.add_argument('-r', '--replace', action='store_true', help='replace <eos> and <unk> token in input')
     parser.add_argument('-s', '--split', action='store_true', help='split a big dialogues pickle file into 3 files')
+    parser.add_argument('-c', '--convert_test_group', action='store_true',
+                        help='convert the test.group.json into a single reference'
+                             'in the format accepted by serban dataset maker')
+    parser.add_argument('-x', '--split_pair', action='store_true',
+                        help='split a query-reply pair file to a query file and a reply file')
     parser.add_argument('-v', '--verbose')
 
     args = parser.parse_args()
@@ -91,3 +129,7 @@ if __name__ == '__main__':
         normalize(args.input, args.output, args.verbose)
     elif args.split:
         split_train_test(args.input)
+    elif args.convert_test_group:
+        convert_test_group(args.input, args.output)
+    elif args.split_pair:
+        split_pair(args.input)
