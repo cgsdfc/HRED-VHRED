@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Generate training dataset.
-CUTOFF=30000
+CUTOFF=35000
 
 RAW_INPUT=/home/cgsdfc/LSDSCC-Reddit-Movie/dataset.txt
 INPUT=/home/cgsdfc/SerbanLSDSCC/vocab_${CUTOFF}/dataset.txt.words
