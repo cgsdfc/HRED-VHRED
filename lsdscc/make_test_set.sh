@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Generate the test set from the `test.group.json`.
 GROUP_JSON=/home/cgsdfc/LSDSCC-Reddit-Movie/test.group.json
 TEST_WORDS=/home/cgsdfc/SerbanLSDSCC/raw_test_dialogues.txt
 TEST_PKL=/home/cgsdfc/SerbanLSDSCC/Test

@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-RAW_INPUT=/home/cgsdfc/LSDSCC-Reddit-Movie/dataset.txt
-INPUT=/home/cgsdfc/SerbanLSDSCC/dataset.txt.words
-OUTPUT=/home/cgsdfc/SerbanLSDSCC/Train
+# Generate training dataset.
 CUTOFF=30000
+
+RAW_INPUT=/home/cgsdfc/LSDSCC-Reddit-Movie/dataset.txt
+INPUT=/home/cgsdfc/SerbanLSDSCC/vocab_${CUTOFF}/dataset.txt.words
+OUTPUT=/home/cgsdfc/SerbanLSDSCC/vocab_${CUTOFF}/Train
 
 # Normalize to required format.
 python lsdscc/convert.py -r --input $RAW_INPUT --output $INPUT
