@@ -62,10 +62,10 @@ def main():
     _logger.info('creating sampler...')
     if args.beam_search:
         _logger.info('Using Beam Search')
-        sampler = search.BeamSampler(model)
+        sampler = search.BeamSampler(model, dynamic_max_len=True)
     else:
         _logger.info('Using Random Search')
-        sampler = search.RandomSampler(model)
+        sampler = search.RandomSampler(model, dynamic_max_len=True)
 
     if os.path.isfile(model_path):
         _logger.debug("Loading previous model from %s", model_path)

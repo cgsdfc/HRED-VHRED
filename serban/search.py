@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def sample_wrapper(sample_logic):
+    # wrap sample_logic to sample the whole input.
     def sample_apply(*args, **kwargs):
         sampler = args[0]
         contexts = args[1]
@@ -72,12 +73,13 @@ class Sampler(object):
     An abstract sampler class 
     """
 
-    def __init__(self, model):
+    def __init__(self, model, dynamic_max_len=False):
         # Compile beam search
         self.name = 'Sampler'
         self.model = model
         self.compiled = False
         self.max_len = 160
+        self.dynamic_max_len = dynamic_max_len
 
     def compile(self):
         self.next_probs_predictor = self.model.build_next_probs_function()
@@ -96,9 +98,11 @@ class Sampler(object):
 
     @sample_wrapper
     def sample(self, *args, **kwargs):
+        # do sample on one example.
         context = args[0]
         # To fix the GpuJoin() problem.
-        # self.max_len = len(context) + 1
+        if self.dynamic_max_len:
+            self.max_len = len(context) + 1
 
         n_samples = kwargs.get('n_samples', 1)
         ignore_unk = kwargs.get('ignore_unk', True)
@@ -293,8 +297,8 @@ class Sampler(object):
 
 
 class RandomSampler(Sampler):
-    def __init__(self, model):
-        Sampler.__init__(self, model)
+    def __init__(self, model, **kwargs):
+        Sampler.__init__(self, model, **kwargs)
         self.name = 'RandomSampler'
         self.hyp_rec = 0
 
@@ -310,8 +314,8 @@ class RandomSampler(Sampler):
 
 
 class BeamSampler(Sampler):
-    def __init__(self, model):
-        Sampler.__init__(self, model)
+    def __init__(self, model, **kwargs):
+        Sampler.__init__(self, model, **kwargs)
         self.name = 'BeamSampler'
         self.hyp_rec = 3
 
