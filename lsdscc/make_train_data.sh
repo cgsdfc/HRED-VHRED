@@ -2,7 +2,6 @@
 
 # Generate training dataset.
 CUTOFF=35000
-
 RAW_INPUT=/home/cgsdfc/LSDSCC-Reddit-Movie/dataset.txt
 INPUT=/home/cgsdfc/SerbanLSDSCC/vocab_${CUTOFF}/dataset.txt.words
 OUTPUT=/home/cgsdfc/SerbanLSDSCC/vocab_${CUTOFF}/Train
