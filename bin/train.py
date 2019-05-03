@@ -197,6 +197,7 @@ def main(args):
             # print 'END-OF-BATCH EXAMPLE!'
             is_end_of_batch = True
 
+        _logger.info('train_batch()')
         if state['use_nce']:
             y_neg = rng.choice(
                 size=(10, max_length, x_data.shape[1]),
