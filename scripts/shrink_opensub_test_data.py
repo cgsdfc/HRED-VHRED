@@ -6,6 +6,7 @@ It runs on  a GPU for nearly 2 days.
 import argparse
 from pathlib import Path
 import logging
+import pickle
 
 import pandas as pd
 
@@ -16,6 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', help='output dir')
     parser.add_argument('-c', dest='context_file')
     parser.add_argument('-r', dest='reference_file')
+    parser.add_argument('-d', dest='dialogues_file')
     parser.add_argument('-f', dest='frac', type=float,
                         help='fraction of samples', default=DEF_FRAC)
     args = parser.parse_args()
@@ -29,15 +31,19 @@ if __name__ == '__main__':
         return Path(path).read_text().splitlines()
 
 
-    def save_file(input_file, series):
+    def save_file(input_file, series, binary=False):
         output = output_dir.joinpath(Path(input_file).name)
         logging.info('saving to %s', output)
-        output.write_text('\n'.join(series))
+        if binary:
+            output.write_bytes(pickle.dumps(series))
+        else:
+            output.write_text('\n'.join(series))
 
 
     payload = {
         'contexts': load_file(args.context_file),
         'references': load_file(args.reference_file),
+        'dialogues': pickle.load(Path(args.dialogues_file).read_bytes()),
     }
 
     logging.info('loading data frame')
@@ -49,3 +55,4 @@ if __name__ == '__main__':
 
     save_file(args.context_file, df['contexts'])
     save_file(args.reference_file, df['references'])
+    save_file(args.dialouges_file, df['dialogues'], True)
