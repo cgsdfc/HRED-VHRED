@@ -520,8 +520,8 @@ def auto_resume(args, state):
     save_dir = args.save_dir or state['save_dir']
     prefix = args.prefix or state['prefix']
     if args.auto_restart:
-        state_file = join(save_dir, prefix + '_state.pkl')
-        metrics_file = join(save_dir, prefix + '_timing.npz')
+        state_file = join(save_dir, prefix + '_auto_state.pkl')
+        metrics_file = join(save_dir, prefix + '_auto_timing.npz')
         _logger.info('restart from:')
         _logger.info(state_file)
         _logger.info(metrics_file)
@@ -550,7 +550,7 @@ def auto_resume(args, state):
     save_model_on_first_valid = False
 
     if args.auto_restart:
-        model_file = join(save_dir, args.prefix + '_model.npz')
+        model_file = join(save_dir, args.prefix + '_auto_model.npz')
         if os.path.isfile(model_file):
             _logger.debug("Loading previous model")
             parameter_strings_to_ignore = []
