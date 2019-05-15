@@ -7,8 +7,6 @@ import copy
 import itertools
 import math
 import logging
-import pickle
-
 import numpy as np
 
 from serban.SS_dataset import SSIterator
@@ -184,22 +182,13 @@ class Iterator(SSIterator):
         self.evaluate_mode = kwargs.pop('evaluate_mode', False)
         print('Data Iterator Evaluate Mode: ', self.evaluate_mode)
 
-        self.ppl_mode = kwargs.pop('ppl_mode', False)
-
     def get_homogenous_batch_iter(self, batch_size=-1):
-        if self.ppl_mode:
-            data_iter = iter(pickle.load(open(self.dialogue_file, 'rb')))
-        else:
-            data_iter = None
         while True:
             batch_size = self.batch_size if (batch_size == -1) else batch_size
 
             data = []
             for k in range(self.k_batches):
-                if self.ppl_mode:
-                    batch = next(data_iter)
-                else:
-                    batch = SSIterator.next(self)
+                batch = SSIterator.next(self)
                 if batch:
                     data.append(batch)
 
@@ -321,7 +310,6 @@ def get_test_iterator(state):
         seed=state['seed'],
         use_infinite_loop=False,
         max_len=-1,
-        evaluate_mode=True,
-        ppl_mode=True,
+        evaluate_mode=True
     )
     return test_data
