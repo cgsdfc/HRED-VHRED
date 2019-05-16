@@ -7,6 +7,8 @@ MODEL_PREFIX=1556265276.0421634_UbuntuModel
 TEST_PATH=/home/cgsdfc/UbuntuDialogueCorpus/Test.dialogues.pkl
 SAVE_DIR=/home/cgsdfc/SavedModels/HRED-VHRED/Ubuntu/LSTM
 
+BS=80
+
 docker run --rm -it --runtime nvidia \
     --name serban_ppl \
     -v $HOME:$HOME \
@@ -14,4 +16,4 @@ docker run --rm -it --runtime nvidia \
     -e PYTHONPATH=$SERBAN_ROOT \
     -e THEANO_FLAGS=device=cuda$GPU_INDEX \
     $SERBAN_IMAGE \
-    python bin/evaluate.py $MODEL_PREFIX  --test-path $TEST_PATH --save-dir $SAVE_DIR
+    python bin/evaluate.py $MODEL_PREFIX  --test-path $TEST_PATH --save-dir $SAVE_DIR --bs $BS

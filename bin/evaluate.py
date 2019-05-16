@@ -54,6 +54,7 @@ def parse_args():
                              " These words make up approximate 48.37% of the training set,"
                              " so removing them should focus the metrics on the topical content "
                              "and ignore syntactic errors.")
+    parser.add_argument('--bs', type=int, help='override the bs in state')
     return parser.parse_args()
 
 
@@ -70,6 +71,9 @@ def main():
 
     logging.basicConfig(level=getattr(logging, state['level']),
                         format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
+    if args.bs is not None:
+        logging.info('bs {}'.format(args.bs))
+        state['bs'] = args.bs
 
     model = DialogEncoderDecoder(state)
     if os.path.isfile(model_path):
