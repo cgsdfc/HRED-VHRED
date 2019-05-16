@@ -67,7 +67,6 @@ def main():
 
     with open(state_path, 'rb') as src:
         state.update(pickle.load(src))
-    state['bs'] = 1  # utterance level
 
     logging.basicConfig(level=getattr(logging, state['level']),
                         format="%(asctime)s: %(name)s: %(levelname)s: %(message)s")
